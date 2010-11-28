@@ -33,7 +33,9 @@ public class FileManager {
      */
     public FileManager(String fName){
         file = new File(fName);
-        type = fName.split(".")[1];
+        System.out.println("File Name: " + fName);
+        type = "wav";//fName.split(".")[1];
+
         System.out.println("Archivo tipo " + type);
 
         try{

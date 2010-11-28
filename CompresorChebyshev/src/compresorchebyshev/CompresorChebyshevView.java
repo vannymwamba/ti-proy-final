@@ -209,7 +209,7 @@ public class CompresorChebyshevView extends FrameView {
     private void btnComprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComprimirMouseClicked
         try {
             FileManager file = new FileManager("BRIEF.wav");
-            ChebyshevCompression compresor = new ChebyshevCompression();
+            Compressor compresor = new Compressor();
             compresor.comprimir(file.getBytes());
         }
         catch(IOException e){
