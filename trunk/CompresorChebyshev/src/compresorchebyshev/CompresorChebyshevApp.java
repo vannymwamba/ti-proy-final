@@ -3,7 +3,6 @@
  */
 package compresorchebyshev;
 
-
 import java.io.IOException;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
@@ -12,7 +11,7 @@ import org.jdesktop.application.SingleFrameApplication;
  * The main class of the application.
  */
 public class CompresorChebyshevApp extends SingleFrameApplication {
-    
+
     /**
      * At startup create and show the main frame of the application.
      */
@@ -43,7 +42,5 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
      */
     public static void main(String[] args) throws IOException {
         launch(CompresorChebyshevApp.class, args);
-        Coeficiente test = new Coeficiente(0xFE0000);
-        System.out.println("Value: " + test);
     }
 }

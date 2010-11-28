@@ -12,54 +12,154 @@ package compresorchebyshev;
  */
 public class Coeficiente {
 
-    /*
+    private byte[] value;
+    
+    /**
      * Default constructor
      */
-    private byte[] value;
-
     public Coeficiente(){
         value = new byte[3];
     }
 
+    /**
+     * Constructor that receives the byte array representation of the float point number
+     * @param byteArray
+     * @deprecated
+     */
     public Coeficiente(byte[] byteArray){
         value = new byte[3];
         for (int i = 0; i < 3; i++)
             this.value[i] = value[i];
     }
 
-    public Coeficiente (long value){
+    /**
+     * Construrtor that recieves the hexadecimal representation of the float number
+     * @param value
+     */
+    public Coeficiente(long value){
         this.value = new byte[3];
         this.value[0] = (byte)((value & 0xFF0000) >>> 16);
         this.value[1] = (byte)((value & 0x00FF00) >>> 8);
         this.value[2] = (byte)(value & 0x0000FF);
     }
 
-    @Override
-    public String toString(){
-    
-        return "" + toDouble();
+    /**
+     * Constructor that receives the base 10 representation of the number
+     * @param value
+     */
+    public Coeficiente(double value){
+
+        this.value = new byte[3];
+        double smallest;
+        int exp;
+        double valExp;
+
+        if (value < 0){
+            setNegative(true);
+            value = -value;
+        }
+        else
+            setNegative(false);
+
+        smallest = Math.pow(2, -19);
+
+        exp = (int)Math.floor(Math.log(value) / Math.log(2));
+        valExp = Math.pow(2, exp);
+        setMantiza((value - valExp)/valExp);
+        
+        setExponent(exp);
     }
 
-    private double toDouble(){
-        boolean neg;
-        int exp = 0;
-        double mantiza = 0;
-        double dValue;
+    /*
+     * @return
+     *  True if the number is negative, false otherwhise
+     *
+     */
+    private boolean isNegative(){
+        return (value[0] & 0x80) == 0x80;
+    }
+
+    /*
+     * @param neg
+     *  True if the numis wil be set as negative, false otherwhise
+     */
+    private void setNegative(boolean neg){
+        if (neg)
+            value[0] = (byte) (value[0] | 0x80);
+        else
+            value[0] = (byte) (value[0] & 0x7F);
+    }
+
+
+    private int getExponent(){
+        return ((value[0] & 0x78)>>> 3) - 8;
+    }
+
+    private void setExponent(int exp){
+        if (exp >= -8 && exp <=7){
+            exp += 8;
+            value[0] = (byte) ((value[0] & 0x87) | exp << 3);
+        }
+        else
+            ; //Arrojar una excepcion que indique que el exponente no es válido
+
+    }
+
+    private double getMantiza(){
         int posVal;
+        double mantiza = 0;
         int val = (((value[0] & 0x7F) << 16) | (value[1]<< 8) | value[2]);
-        neg = (value[0] & 0x80) == 0x80;
-        exp = (value[0] & 0x78)>>> 3;
         for (int i = 1; i <= 19; i++){
             posVal = (int) Math.pow(2, 19 - i);
             mantiza += (Math.pow(2 * Integer.bitCount(val & posVal),  i ) != 0 ? 1/Math.pow(2 * Integer.bitCount(val & posVal),  i ) : 0);
         }
 
-        dValue = Math.pow(2, exp - 8) * (1 + mantiza);
+        return mantiza;
+    }
 
-        if (neg)
-            dValue = -dValue;
-        return dValue;
+    /**
+     * Sets the mantiza a new value
+     * @param mantiza
+     * The decimal value for the mantiza
+     */
+    public final void setMantiza(double mantiza){
+        int binMantiza;
+        double smallest;
+        if (mantiza >=0 && mantiza < 1){
+            value [0] = (byte) (value[0] & 0xF8);
+            value [1] = (byte) (value[1] & 0x00);
+            value [2] = (byte) (value[2] & 0x00);
+
+            smallest = Math.pow(2, -19);
+
+            binMantiza = (int) (mantiza / smallest);
+
+            value [0] = (byte) (value[0] | (binMantiza & 0x070000) >>> 16);
+            value [1] = (byte) ((binMantiza & 0x00FF00) >>> 8);
+            value [2] = (byte) (binMantiza & 0x0000FF);
+        }else
+            ;//Arroja excepción de mantiza inválida
 
     }
+
+    private double toDouble(){
+        double dValue;
+        dValue = Math.pow(2, getExponent()) * (1 + getMantiza());
+
+        System.out.println("Exponente: " + getExponent() + "\tMantiza: " + getMantiza() + "\n" + dValue);
+        if (isNegative())
+            dValue = -dValue;
+        return dValue;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public String toString(){
+        return Integer.toBinaryString(value[0]<< 16 | value[1] <<8 | value[2]) + " " + toDouble();
+    }
+
 
 }
