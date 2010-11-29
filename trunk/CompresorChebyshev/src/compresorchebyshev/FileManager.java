@@ -127,10 +127,14 @@ public class FileManager {
             }
 
             //Sets the available bytes size to read
+            currentBlockSize=blockSize;
             if ((fileSize - currentPos) < blockSize) {
                 currentBlockSize = (int) (fileSize - currentPos);
             }
+            currentDataBlock = new byte[blockSize];
+            System.out.println(currentPos+","+currentBlockSize+","+fileSize);
             System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, currentBlockSize);
+            //Copies an array from the specified source array, beginning at the specified position, to the specified position of the destination array.
         } else {
             return null;
         }
