@@ -80,7 +80,7 @@ public class Compressor {
         int i, j;
         int[] muestrasDer, muestrasIzq;
         //Para debuggear
-        int numMuestras = (arreglo.length - 44) / 4;
+        int numMuestras = arreglo.length / 4;
         long tamArchivoOrig = arreglo.length;
         long tamArchivoComp = tamArchivoOrig / FC;
 
