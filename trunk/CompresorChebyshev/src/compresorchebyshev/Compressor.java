@@ -24,20 +24,24 @@ public class Compressor {
 
     /**
      * Default constructor
+     * @deprecated
+     * If nP it's not set with a default value the class makes an exception when executing calcularCoeficientes()
      */
     public Compressor() {
         spl = new Spline();
     }
 
-    public double[] calcularCoeficientes(int[] samples, int GP, int mXB) {
+    public Coeficiente[] calcularCoeficientes(int[] samples, int GP, int mXB) {
         this.GP = GP;
         muestrasXBloque = mXB;
         spl.setpN(mXB);
         return calcularCoeficientes(samples);
     }
 
-    public double[] calcularCoeficientes(int[] samples) {
-        double[] coef = new double[GP+1], Ybar, A;
+    public Coeficiente[] calcularCoeficientes(int[] samples) {
+        Coeficiente[] result = new Coeficiente[GP+1];
+        double[] coef = new double[GP+1];
+        double[] Ybar, A;
         int i, j;
         Ybar = spl.calcularSpline(samples);
         A = spl.getA();
@@ -47,14 +51,16 @@ public class Compressor {
         }
         coef[0] = coef[0] / muestrasXBloque;
 
+        result[0] = new Coeficiente(coef[0]);
         for (j = 1; j < (GP + 1); j++) {
             coef[j] = 0;
             for (i = 0; i < muestrasXBloque; i++) {
                 coef[j] = coef[j] + Ybar[i] * Math.cos((j - 1) * A[i]);
             }
             coef[j] = coef[j] * 2 / muestrasXBloque;
+            result[j] = new Coeficiente(coef[j]);
         }
-        return coef;
+        return result;
     }
 
     /**
@@ -68,13 +74,12 @@ public class Compressor {
         int[] muestrasDer, muestrasIzq;
         //Para debuggear
         int FC = 6;
-        int GP=7;
         int numMuestras = (arreglo.length - 44) / 4;
         long tamArchivoOrig = arreglo.length;
         long tamArchivoComp = tamArchivoOrig / FC;
         long numBloques = tamArchivoComp / (FC * 6 * (GP + 1));
-        muestrasXBloque = (int) (numMuestras / numBloques);
-        int tamArchivoBytes = arreglo.length;
+        //muestrasXBloque = (int) (numMuestras / numBloques);
+        //int tamArchivoBytes = arreglo.length;
         
         //System.out.println(numMuestras);
         canalDer = new byte[numMuestras * 2];
@@ -106,14 +111,14 @@ public class Compressor {
             muestrasIzq[j] = unsignedShortToInt(canalIzq[i], canalIzq[i + 1]) - 32768;
             j++;
         }
-        muestrasXBloque=72;
+
         //obtener coeficientes compresor y spline para un bloque
         int[] bloque = new int[muestrasXBloque];
         for(i=0;i<muestrasXBloque;i++){
             bloque[i]=muestrasDer[i];
         }
         //Compressor comp = new Compressor(GP, muestrasXBloque);
-        double[] coef = calcularCoeficientes(bloque);
+        Coeficiente[] coef = calcularCoeficientes(bloque);
         for(i=0;i<coef.length;i++){
             System.out.println(coef[i]);
         }

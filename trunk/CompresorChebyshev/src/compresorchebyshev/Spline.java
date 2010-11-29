@@ -20,10 +20,15 @@ public class Spline {
         pN = mXB;
         reiniciarVariables();
     }
+
+    /*
+     *@deprecated
+     */
     public Spline(){
         
     }
-    public void reiniciarVariables(){
+
+    private void reiniciarVariables(){
         X = new double[pN];//arreglo de la variable independiente
         double step = (2 / ((double)pN - 1));
         int i;
