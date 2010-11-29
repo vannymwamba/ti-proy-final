@@ -45,6 +45,12 @@ public class Spline {
         Y=new int[pN];
     }
 
+     /*
+     * Calcula el spline
+     * @param int pn numero de puntos
+     * @param float[] Y vector de valores
+     */
+
     public double[] calcularSpline(int[] Y) {
         double[] RHO = new double[pN], TAU = new double[pN],
                 Xbar = new double[pN], Ybar = new double[pN];

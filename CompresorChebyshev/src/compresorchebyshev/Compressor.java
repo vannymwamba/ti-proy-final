@@ -13,12 +13,17 @@ import java.io.IOException;
 public class Compressor {
 
     private int GP;
+    private int FC;
+    private int FE;
     private int muestrasXBloque;
     private Spline spl;
+    
 
-    public Compressor(int GP, int mXB) {
+    public Compressor(int GP, int FC, int FE) {
         this.GP = GP;
-        muestrasXBloque = mXB;
+        this.FC = FC;
+        this.FE = FE;
+        muestrasXBloque = (int) ((GP + 1) * FC * 3) / 2;//((24*(GP+1)*2)/8*FC)/4
         spl = new Spline(muestrasXBloque);
     }
 
@@ -31,16 +36,17 @@ public class Compressor {
         spl = new Spline();
     }
 
-    public Coeficiente[] calcularCoeficientes(int[] samples, int GP, int mXB) {
+    public Coeficiente[] calcularCoeficientes(int[] samples, int GP, int FC) {
         this.GP = GP;
-        muestrasXBloque = mXB;
-        spl.setpN(mXB);
+        this.FC = FC;
+        muestrasXBloque = (int) ((GP + 1) * FC * 3) / 2;//((24*(GP+1)*2)/8*FC)/4
+        spl.setpN(muestrasXBloque);
         return calcularCoeficientes(samples);
     }
 
     public Coeficiente[] calcularCoeficientes(int[] samples) {
-        Coeficiente[] result = new Coeficiente[GP+1];
-        double[] coef = new double[GP+1];
+        Coeficiente[] result = new Coeficiente[GP + 1];
+        double[] coef = new double[GP + 1];
         double[] Ybar, A;
         int i, j;
         Ybar = spl.calcularSpline(samples);
@@ -68,20 +74,15 @@ public class Compressor {
      * @param arreglo
      * @throws IOException
      */
-    public void comprimir(byte[] arreglo) throws IOException {
+    public Coeficiente[] comprimirBloque(byte[] arreglo) throws IOException {
         byte[] canalDer, canalIzq;
         int i, j;
         int[] muestrasDer, muestrasIzq;
         //Para debuggear
-        int FC = 6;
         int numMuestras = (arreglo.length - 44) / 4;
         long tamArchivoOrig = arreglo.length;
         long tamArchivoComp = tamArchivoOrig / FC;
-        long numBloques = tamArchivoComp / (FC * 6 * (GP + 1));
-        //muestrasXBloque = (int) (numMuestras / numBloques);
-        //int tamArchivoBytes = arreglo.length;
-        
-        //System.out.println(numMuestras);
+
         canalDer = new byte[numMuestras * 2];
         canalIzq = new byte[numMuestras * 2];
         /*
@@ -107,47 +108,46 @@ public class Compressor {
         muestrasIzq = new int[numMuestras];
         j = 0;
         for (i = 0; i < canalDer.length; i = i + 2) {
-            muestrasDer[j] = unsignedShortToInt(canalDer[i], canalDer[i + 1]) - 32768;
-            muestrasIzq[j] = unsignedShortToInt(canalIzq[i], canalIzq[i + 1]) - 32768;
+            muestrasDer[j] = bytesAEnteroCompDos(canalDer[i], canalDer[i+1]);
+            muestrasIzq[j] = bytesAEnteroCompDos(canalIzq[i], canalIzq[i+1]);
             j++;
         }
 
         //obtener coeficientes compresor y spline para un bloque
         int[] bloque = new int[muestrasXBloque];
-        for(i=0;i<muestrasXBloque;i++){
-            bloque[i]=muestrasDer[i];
+        for (i = 0; i < muestrasXBloque; i++) {
+            bloque[i] = muestrasDer[i];
         }
         //Compressor comp = new Compressor(GP, muestrasXBloque);
         Coeficiente[] coef = calcularCoeficientes(bloque);
-        for(i=0;i<coef.length;i++){
+        for (i = 0; i < coef.length; i++) {
             System.out.println(coef[i]);
         }
-
-
-
-
-        
         System.out.println("Compresion Finalizada");
+        return coef;
+        
     }
 
     /**
-     * Convierte 2 bytes en un entero
+     * Convierte 2 bytes en un entero complemento a 2
      * @param b0 primer byte
      * @param b1 segundo byte
      * @return entero
      */
-    public int unsignedShortToInt(byte b0, byte b1) {
+    public int bytesAEnteroCompDos(byte b0, byte b1) {
         int i = 0;
         i |= b0 & 0xFF;
         i <<= 8;
         i |= b1 & 0xFF;
+        if (i > 32767) {
+            i = i % 32768 - 32768;
+        }
         return i;
     }
-    /*
-     * Calcula el spline
-     * @param int pn numero de puntos
-     * @param float[] Y vector de valores
-     */
+
+    public int getMuestrasXBloque() {
+        return muestrasXBloque;
+    }
 
 
 

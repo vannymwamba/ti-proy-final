@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package compresorchebyshev;
 
 import java.io.IOException;
@@ -11,11 +10,13 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.File;
+
 /**
  *
  * @author emirhg
  */
 public class FileManager {
+
     private File file;
     private String type;
     private int headerSize;
@@ -27,30 +28,28 @@ public class FileManager {
     private int currentBlockSize;
     private int blockSize;
 
-
     /**
      * Creates  new Object FileManager that will operate with the file given in fName
      * @param fName
      * The file path
      */
-    public FileManager(String fName){
+    public FileManager(String fName) {
         file = new File(fName);
         System.out.println("File Name: " + fName);
         type = fName.split("\\.")[1];
-        
+
         System.out.println("Archivo tipo " + type);
 
-        try{
+        try {
             readFile();
             currentPos = 0;
-            
-            if (type.equals("wav")){
+
+            if (type.equals("wav")) {
                 headerSize = 44;
                 currentPos = headerSize;
             }
 
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             System.err.println("Ocurrio un error al recuperar los datos del archivo");
             System.err.println(e.toString());
             bytes = null;
@@ -61,7 +60,7 @@ public class FileManager {
     /*
      * Reads the whole file and stores it information in a byte array structure
      */
-    private void readFile()  throws IOException{
+    private void readFile() throws IOException {
         InputStream is = new FileInputStream(file);
 
         // Get the size of the file
@@ -105,35 +104,36 @@ public class FileManager {
      * @return
      * The file header
      */
-    public byte[] getHeader(){
+    public byte[] getHeader() {
         byte header[] = new byte[headerSize];
         System.arraycopy(bytes, 0, header, 0, headerSize);
         return header;
     }
-
 
     /**
      * Gets the next block of non header data
      * @return
      * A byte array with the next block data, if there is no more blocks available it returns null
      */
-    public byte[] getNextDataBlock(){
+    public byte[] getNextDataBlock() {
 
 
-        if (isNextDataBlock()){
+        if (isNextDataBlock()) {
             //Increments the current position in the data
-            if (currentPos < headerSize)
+            if (currentPos < headerSize) {
                 currentPos = headerSize;
-            else
+            } else {
                 currentPos += blockSize;
+            }
 
             //Sets the available bytes size to read
-            if (fileSize - currentPos < blockSize)
+            if ((fileSize - currentPos) < blockSize) {
                 currentBlockSize = (int) (fileSize - currentPos);
+            }
             System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, currentBlockSize);
-        }
-        else
+        } else {
             return null;
+        }
         return currentDataBlock;
     }
 
@@ -142,8 +142,8 @@ public class FileManager {
      * @return
      * True if there are available blocks, false otherwise
      */
-    public boolean isNextDataBlock(){
-        return currentPos<fileSize;
+    public boolean isNextDataBlock() {
+        return currentPos < fileSize;
     }
 
     /**
@@ -152,7 +152,7 @@ public class FileManager {
      * @return
      * The lecture block size in bytes
      */
-    public int getBlockSize(){
+    public int getBlockSize() {
         return blockSize;
     }
 
@@ -161,14 +161,17 @@ public class FileManager {
      * @param size
      * New block size
      */
-    public void setBlockSize(int size){
+    public void setBlockSize(int size) {
         blockSize = size;
     }
 
-    public void writeByteArray(String fName,byte[] data) throws IOException{
+    public void writeByteArray(String fName, byte[] data) throws IOException {
         OutputStream os = new FileOutputStream(new File(fName));
         os.write(data);
         os.close();
     }
 
+    public long getFileSize() {
+        return fileSize;
+    }
 }
