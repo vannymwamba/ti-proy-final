@@ -131,16 +131,16 @@ public class CompresorChebyshevView extends FrameView {
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(135, 135, 135)
+                .addGap(133, 133, 133)
                 .addComponent(btnComprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(165, Short.MAX_VALUE))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addContainerGap(118, Short.MAX_VALUE)
+                .addContainerGap(195, Short.MAX_VALUE)
                 .addComponent(btnComprimir)
-                .addGap(99, 99, 99))
+                .addGap(22, 22, 22))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -209,7 +209,7 @@ public class CompresorChebyshevView extends FrameView {
     private void btnComprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComprimirMouseClicked
         try {
             FileManager file = new FileManager("BRIEF.wav");
-            Compressor compresor = new Compressor();
+            Compressor compresor = new Compressor(7,72);
             compresor.comprimir(file.getBytes());
         }
         catch(IOException e){

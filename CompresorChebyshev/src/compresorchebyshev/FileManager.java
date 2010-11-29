@@ -7,7 +7,9 @@ package compresorchebyshev;
 
 import java.io.IOException;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.File;
 /**
  *
@@ -34,8 +36,8 @@ public class FileManager {
     public FileManager(String fName){
         file = new File(fName);
         System.out.println("File Name: " + fName);
-        type = "wav";//fName.split(".")[1];
-
+        type = fName.split("\\.")[1];
+        
         System.out.println("Archivo tipo " + type);
 
         try{
@@ -161,6 +163,12 @@ public class FileManager {
      */
     public void setBlockSize(int size){
         blockSize = size;
+    }
+
+    public void writeByteArray(String fName,byte[] data) throws IOException{
+        OutputStream os = new FileOutputStream(new File(fName));
+        os.write(data);
+        os.close();
     }
 
 }

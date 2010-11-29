@@ -64,10 +64,25 @@ public class Coeficiente {
         smallest = Math.pow(2, -19);
 
         exp = (int)Math.floor(Math.log(value) / Math.log(2));
-        valExp = Math.pow(2, exp);
-        setMantiza((value - valExp)/valExp);
+        if (exp >= -8 && exp <= 7){
+            valExp = Math.pow(2, exp);
+            setMantiza((value - valExp)/valExp);
+            setExponent(exp);
+        }
+        else{
+            if (exp >7){
+                this.value[0] = (byte) (this.value[0] | 0x7F);
+                this.value[1] = (byte) 0xFF;
+                this.value[2] = (byte) 0xFF;
+            }else{
+                this.value[0] = (byte) (this.value[0] & 0x80);
+                this.value[1] = (byte) 0x00;
+                this.value[2] = (byte) 0x00;
+            }
+
+        }
+
         
-        setExponent(exp);
     }
 
     /*
@@ -101,7 +116,7 @@ public class Coeficiente {
             value[0] = (byte) ((value[0] & 0x87) | exp << 3);
         }
         else
-            ; //Arrojar una excepcion que indique que el exponente no es válido
+            ;//value[0] = (byte) ((value[0] & 0x87) | 0xF << 3); //Arrojar una excepcion que indique que el exponente no es válido
 
     }
 
@@ -146,7 +161,6 @@ public class Coeficiente {
         double dValue;
         dValue = Math.pow(2, getExponent()) * (1 + getMantiza());
 
-        System.out.println("Exponente: " + getExponent() + "\tMantiza: " + getMantiza() + "\n" + dValue);
         if (isNegative())
             dValue = -dValue;
         return dValue;
@@ -158,7 +172,7 @@ public class Coeficiente {
      */
     @Override
     public String toString(){
-        return Integer.toBinaryString(value[0]<< 16 | value[1] <<8 | value[2]) + " " + toDouble();
+        return "" + toDouble();
     }
 
 
