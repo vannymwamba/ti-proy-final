@@ -40,6 +40,7 @@ public class Compressor {
         this.GP = GP;
         this.FC = FC;
         muestrasXBloque = (int) ((GP + 1) * FC * 3) / 2;//((24*(GP+1)*2)/8*FC)/4
+        System.out.println("Muestras: "+muestrasXBloque);
         spl.setpN(muestrasXBloque);
         return calcularCoeficientes(samples);
     }

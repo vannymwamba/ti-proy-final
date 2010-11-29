@@ -48,11 +48,15 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
     public static void comprimir(String path, Object GP, Object FC) {
         try {
             FileManager file = new FileManager(path);
-            Compressor compresor = new Compressor(Integer.parseInt(FC.toString()), Integer.parseInt(GP.toString()), 0);
+            Compressor compresor = new Compressor(Integer.parseInt(GP.toString()), Integer.parseInt(FC.toString()), 0);
             int i;
-            file.setBlockSize(compresor.getMuestrasXBloque() * 4);
-            for (i = 0; i < (file.getFileSize() / file.getBlockSize()); i++) {
-                compresor.comprimirBloque(file.getNextDataBlock());
+            long numBloques;
+            Coeficiente[] tempEscritura;
+            file.setBlockSize(compresor.getMuestrasXBloque() * 8);
+            tempEscritura= new Coeficiente[compresor.getMuestrasXBloque()];
+            numBloques=(file.getFileSize() -44) / file.getBlockSize();
+            for (i = 0; i < numBloques; i++) {
+                tempEscritura=compresor.comprimirBloque(file.getNextDataBlock());
             }
 
             System.out.println("Compresión de todos los bloques finalizada");
