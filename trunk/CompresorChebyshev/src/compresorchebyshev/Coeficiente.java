@@ -66,12 +66,14 @@ public class Coeficiente {
             setNegative(true);
             value = -value;
         }
-        else
+        else{
             setNegative(false);
+        }
 
+        exp = value > 1 ? (int)Math.ceil(Math.log(value) / Math.log(2)) : (int)Math.floor(Math.log(value) / Math.log(2));
 
-        exp = (int)Math.ceil(Math.log(value) / Math.log(2));
         if (exp >= -8 && exp <= 7){
+
             valExp = Math.pow(2, exp);
             setMantiza((value - valExp)/valExp);
 
@@ -199,8 +201,6 @@ public class Coeficiente {
     }
 
     public String getBinaryString(){
-        return Integer.toBinaryString(((value[0] & 0xFF) << 16) | (value[1]<< 8) | value[2]);
+        return Integer.toBinaryString(((value[0] & 0xFF) << 16) | (value[1] & 0xFF) << 8 | value[2] & 0xFF);
     }
-
-
 }
