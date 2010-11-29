@@ -147,7 +147,7 @@ public class FileManager {
      * True if there are available blocks, false otherwise
      */
     public boolean isNextDataBlock() {
-        return currentPos < fileSize;
+        return currentPos < fileSize && blockSize != 0;
     }
 
     /**
@@ -167,6 +167,7 @@ public class FileManager {
      */
     public void setBlockSize(int size) {
         blockSize = size;
+        currentDataBlock = new byte[blockSize];
     }
 
     public void writeByteArray(String fName, byte[] data) throws IOException {

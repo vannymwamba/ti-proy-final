@@ -28,8 +28,7 @@ public class Coeficiente {
      */
     public Coeficiente(byte[] byteArray){
         value = new byte[3];
-        for (int i = 0; i < 3; i++)
-            this.value[i] = value[i];
+        System.arraycopy(value, 0, this.value, 0, 3);
     }
 
     /**
@@ -37,10 +36,7 @@ public class Coeficiente {
      * @param value
      */
     public Coeficiente(long value){
-        this.value = new byte[3];
-        this.value[0] = (byte)((value & 0xFF0000) >>> 16);
-        this.value[1] = (byte)((value & 0x00FF00) >>> 8);
-        this.value[2] = (byte)(value & 0x0000FF);
+        setValue(value);
     }
 
     /**
@@ -49,11 +45,23 @@ public class Coeficiente {
      */
     public Coeficiente(double value){
 
+        setValue(value);
+    }
+    
+    public final void setValue(long value){
+        this.value = new byte[3];
+        this.value[0] = (byte)((value & 0xFF0000) >>> 16);
+        this.value[1] = (byte)((value & 0x00FF00) >>> 8);
+        this.value[2] = (byte)(value & 0x0000FF);
+    }
+
+    public final void setValue(double value){
         this.value = new byte[3];
         double smallest;
         int exp;
         double valExp;
 
+        //Enciende el bit del signo si es un número neggativo
         if (value < 0){
             setNegative(true);
             value = -value;
@@ -61,15 +69,17 @@ public class Coeficiente {
         else
             setNegative(false);
 
-        smallest = Math.pow(2, -19);
 
-        exp = (int)Math.floor(Math.log(value) / Math.log(2));
+        exp = (int)Math.ceil(Math.log(value) / Math.log(2));
         if (exp >= -8 && exp <= 7){
             valExp = Math.pow(2, exp);
             setMantiza((value - valExp)/valExp);
-            setExponent(exp);
+
+            System.out.println("Fractional: " + getBinaryString(value));
+            setExponent(exp);            
         }
         else{
+            System.err.println("Exponente: " + exp);
             if (exp >7){
                 this.value[0] = (byte) (this.value[0] | 0x7F);
                 this.value[1] = (byte) 0xFF;
@@ -81,8 +91,6 @@ public class Coeficiente {
             }
 
         }
-
-        
     }
 
     /*
@@ -137,6 +145,21 @@ public class Coeficiente {
      * @param mantiza
      * The decimal value for the mantiza
      */
+
+    private String getBinaryString(double val){
+        String result="";
+        for (int i = 0; i < 19; i++){
+            val = val *2;
+            if (val>1){
+                result += "1";
+                val--;
+            }else
+                result += "0";
+
+        }
+
+        return result;
+    }
     public final void setMantiza(double mantiza){
         int binMantiza;
         double smallest;
@@ -173,6 +196,10 @@ public class Coeficiente {
     @Override
     public String toString(){
         return "" + toDouble();
+    }
+
+    public String getBinaryString(){
+        return Integer.toBinaryString(((value[0] & 0xFF) << 16) | (value[1]<< 8) | value[2]);
     }
 
 
