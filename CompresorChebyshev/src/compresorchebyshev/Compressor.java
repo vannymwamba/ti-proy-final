@@ -124,7 +124,6 @@ public class Compressor {
         for (i = 0; i < coef.length; i++) {
             System.out.println(coef[i]);
         }
-        System.out.println("Compresion Finalizada");
         return coef;
         
     }

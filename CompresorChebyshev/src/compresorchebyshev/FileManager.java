@@ -4,6 +4,7 @@
  */
 package compresorchebyshev;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,24 +36,27 @@ public class FileManager {
      */
     public FileManager(String fName) {
         file = new File(fName);
-        System.out.println("File Name: " + fName);
-        type = fName.split("\\.")[1];
 
-        System.out.println("Archivo tipo " + type);
+        if(fName.contains(".")){
 
-        try {
-            readFile();
-            currentPos = 0;
+            type = fName.split("\\.")[1];
 
-            if (type.equals("wav")) {
-                headerSize = 44;
-                currentPos = headerSize;
+            if (!type.equals("kl1")){
+                try {
+                    readFile();
+                    currentPos = 0;
+
+                    if (type.equals("wav")) {
+                        headerSize = 44;
+                        currentPos = headerSize;
+                    }
+
+                } catch (IOException e) {
+                    System.err.println("Ocurrio un error al recuperar los datos del archivo");
+                    System.err.println(e.toString());
+                    bytes = null;
+                }
             }
-
-        } catch (IOException e) {
-            System.err.println("Ocurrio un error al recuperar los datos del archivo");
-            System.err.println(e.toString());
-            bytes = null;
         }
     }
 
@@ -178,5 +182,36 @@ public class FileManager {
 
     public long getFileSize() {
         return fileSize;
+    }
+
+    public void appendData(byte data){
+        try{
+            OutputStream os = new FileOutputStream(file,true);
+            os.write(data);
+            os.close();
+        }catch(IOException e){
+            System.err.println("Couldn't write the data");
+        }
+    }
+
+    public void appendData(byte[] data){
+        try{
+            OutputStream os = new FileOutputStream(file,true);
+            os.write(data);
+            os.close();
+        }catch(IOException e){
+            System.err.println("Couldn't write the data");
+        }
+    }
+
+    public void appendData(String data){
+        try{
+            OutputStream os = new FileOutputStream(file,true);
+            DataOutputStream dos = new DataOutputStream(os);
+            dos.writeBytes(data);
+            os.close();
+        }catch(IOException e){
+            System.err.println("Couldn't write the data");
+        }
     }
 }

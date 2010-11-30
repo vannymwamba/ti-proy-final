@@ -42,13 +42,6 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
      */
     public static void main(String[] args) throws IOException {
         launch(CompresorChebyshevApp.class, args);
-        Coeficiente coef = new Coeficiente(0xFE0000);
-        Coeficiente coef2 = new Coeficiente(0.576955);
-        Coeficiente coef3 = new Coeficiente(0.01145978);
-        //0 0111 001 00111011 00110001
-        System.out.println(coef + " " + coef.getBinaryString());
-        System.out.println(coef2 + " " + coef2.getBinaryString());
-        System.out.println(coef3 + " " + coef3.getBinaryString());
     }
     //Crear Compressor y ejecutar compresión
 
@@ -62,11 +55,24 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             file.setBlockSize(compresor.getMuestrasXBloque() * 8);
             tempEscritura= new Coeficiente[compresor.getMuestrasXBloque()];
             numBloques=(file.getFileSize() -44) / file.getBlockSize();
+
+            FileManager fOut = new FileManager("salida.kl1");
+
+            fOut.appendData(FC.toString());
+            fOut.appendData((byte)0x0D);
+            fOut.appendData(GP.toString());
+            fOut.appendData((byte)0x0D);
+            fOut.appendData("1");
+            fOut.appendData(file.getHeader());
+
             for (i = 0; i < numBloques; i++) {
                 tempEscritura=compresor.comprimirBloque(file.getNextDataBlock());
+                for (int j=0; j < tempEscritura.length; j++)
+                    fOut.appendData(tempEscritura[j].getAsByteArray());
             }
 
             System.out.println("Compresión de todos los bloques finalizada");
+
         } catch (IOException e) {
             System.err.println("Error al comprimir el archivo");
             System.err.println(e.toString());
