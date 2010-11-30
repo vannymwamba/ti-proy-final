@@ -13,6 +13,8 @@ package compresorchebyshev;
 public class Coeficiente {
 
     private byte[] value;
+    private boolean underflow;
+    private boolean overflow;
     
     /**
      * Default constructor
@@ -76,17 +78,17 @@ public class Coeficiente {
 
             valExp = Math.pow(2, exp);
             setMantiza((value - valExp)/valExp);
-
-            System.out.println("Fractional: " + getBinaryString(value));
             setExponent(exp);            
         }
         else{
             System.err.println("Exponente: " + exp);
             if (exp >7){
+                overflow = true;
                 this.value[0] = (byte) (this.value[0] | 0x7F);
                 this.value[1] = (byte) 0xFF;
                 this.value[2] = (byte) 0xFF;
             }else{
+                underflow = true;
                 this.value[0] = (byte) (this.value[0] & 0x80);
                 this.value[1] = (byte) 0x00;
                 this.value[2] = (byte) 0x00;
@@ -202,5 +204,17 @@ public class Coeficiente {
 
     public String getBinaryString(){
         return Integer.toBinaryString(((value[0] & 0xFF) << 16) | (value[1] & 0xFF) << 8 | value[2] & 0xFF);
+    }
+
+    public boolean isUnderflow(){
+        return underflow;
+    }
+
+    public boolean isOverflow(){
+        return overflow;
+    }
+
+    public byte[] getAsByteArray(){
+        return value;
     }
 }
