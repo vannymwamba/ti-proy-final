@@ -122,7 +122,6 @@ public class Compressor {
         }
 
         return resultado;
-
     }
 
     /**
