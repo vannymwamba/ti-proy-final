@@ -76,15 +76,14 @@ public class FileManager {
             try {
                 if (!write) {
                     readFile();
-
                     int i = 0;
-                    while (i < bytes.length - 6 && headerSize == 0) {
-                        if (bytes[i] == (byte) 'd' && bytes[i + 1] == (byte) 'a' && bytes[i + 2] == (byte) 't' && bytes[i + 3] == (byte) 'a' && bytes[i + 4] == (byte) 0x00 && bytes[i + 5] == 0x40 && bytes[i + 6] == 0x01) {
-                            headerSize = i + 7;
-                        }
+                    while (i < bytes.length - 7 && headerSize == 0){
+                        if (bytes[i] == (byte)'d' && bytes[i+1] == (byte)'a' && bytes[i+2] == (byte)'t' && bytes[i+3] == (byte)'a' && bytes[i+4] == (byte)0x00 && bytes[i+5] == 0x40 && bytes[i+6] == 0x01 && bytes[i+7] == 0x00)
+                            headerSize =  i + 8;
                         i++;
                     }
 
+                    System.err.println(java.util.Arrays.toString(getHeader()));
                     currentPos = headerSize;
                     i = 0;
                     if (type.equals("KL1")) {
@@ -112,11 +111,10 @@ public class FileManager {
                         scaleFactor = Long.decode(scaleFact);
 
                         blockSize = (int) ((polDegree + 1) * 3);
-
-                        if (file.exists()) {
-                            //file.delete();
-                        }
                     }
+                }else{
+                    if (file.exists())
+                        file.delete();
                 }
 
             } catch (IOException e) {
@@ -125,6 +123,7 @@ public class FileManager {
                 bytes = null;
             }
         }
+
     }
 
 
@@ -213,17 +212,23 @@ public class FileManager {
 
     public Coeficiente[] getNextCoeficientesBlock() {
         Coeficiente[] result = new Coeficiente[blockSize / 3];
-        byte[] coef = new byte[3];
-        getNextDataBlock();
+        if (getNextDataBlock() != null){
+            byte[] coef = new byte[3];
 
-        for (int i = 0; i < currentDataBlock.length; i = i + 3) {
-            System.arraycopy(currentDataBlock, i, coef, 0, 2);
-            result[i / 3] = new Coeficiente(coef);
-        }
+            for (int i = 0; i< currentDataBlock.length; i = i + 3){
+                System.arraycopy(currentDataBlock, i, coef, 0, 2);
+                result[i/3] = new Coeficiente(coef);
+            }
+        }else
+            return null;
 
         return result;
     }
 
+    public long getCurrentPos() {
+        return currentPos;
+    }
+    
     /**
      * Verify if there are any available blocks to read
      * @return
@@ -251,12 +256,6 @@ public class FileManager {
     public void setBlockSize(int size) {
         blockSize = size;
         currentDataBlock = new byte[blockSize];
-    }
-
-    public void writeByteArray(String fName, byte[] data) throws IOException {
-        OutputStream os = new FileOutputStream(new File(fName));
-        os.write(data);
-        os.close();
     }
 
     public long getFileSize() {

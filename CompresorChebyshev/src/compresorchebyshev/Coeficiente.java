@@ -81,7 +81,7 @@ public class Coeficiente {
             setExponent(exp);            
         }
         else{
-            System.err.println("Exponente: " + exp);
+            //System.err.println("Exponente: " + exp);
             if (exp >7){
                 overflow = true;
                 this.value[0] = (byte) (this.value[0] | 0x7F);

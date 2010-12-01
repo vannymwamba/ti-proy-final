@@ -65,14 +65,15 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             fOut.appendData("1");
             fOut.appendData(file.getHeader());
 
+            System.err.println("Tamaño de la cabecera: " + file.getHeader().length);
             for (i = 0; i < numBloques; i++) {
-                tempEscritura = compresor.comprimirBloque(file.getNextDataBlock());
-                for (int j = 0; j < tempEscritura.length; j++) {
+                tempEscritura=compresor.comprimirBloque(file.getNextDataBlock());
+                System.out.println("Bloque: " + (i+1) + " " + java.util.Arrays.toString(tempEscritura));
+                for (int j=0; j < tempEscritura.length; j++)
                     fOut.appendData(tempEscritura[j].getAsByteArray());
-                }
             }
 
-            System.out.println("Compresión de todos los bloques finalizada");
+            System.err.println("===[ Compresión de todos los bloques finalizada: " + numBloques + " ]===");
 
             // Código de prueba para recuperar el archivo comprimido
             FileManager fIn = new FileManager("salida.kl1", false);
@@ -80,8 +81,14 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             System.out.println("Factor de comp: " + fIn.getCompresionFactor());
             System.out.println("Factor de escala: " + fIn.getScaleFactor());
 
+            System.err.println("Tamaño de la cabecera: " + fIn.getHeader().length);
+            System.err.println("Tamaño del bloque: " + fIn.getBlockSize() );
+            int j=1;
+
             while (fIn.isNextDataBlock()) {
-                System.out.println("\n" + java.util.Arrays.toString(fIn.getNextCoeficientesBlock()));
+                //System.out.println("Bloque: " + j + ":" + fIn.getCurrentPos() + " " + java.util.Arrays.toString(fIn.getNextCoeficientesBlock()));
+                System.out.println("Bloque: " + j + ":" + fIn.getCurrentPos() + " " + java.util.Arrays.toString(fIn.getNextDataBlock()));
+                j++;
             }
 
             for (i = 0; i < tempEscritura.length; i++) {
