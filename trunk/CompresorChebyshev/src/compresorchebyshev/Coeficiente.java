@@ -199,7 +199,7 @@ public class Coeficiente {
      */
     @Override
     public String toString(){
-        return "" + toDouble();
+        return "" + getBinaryString();
     }
 
     public String getBinaryString(){

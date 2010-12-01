@@ -66,6 +66,8 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             fOut.appendData(file.getHeader());
 
             System.err.println("Tamaño de la cabecera: " + file.getHeader().length);
+            System.err.println("Posición: " + file.getCurrentPos());
+            System.err.println("First Block Data: " + java.util.Arrays.toString(file.getCurrentDataBlock()));
             for (i = 0; i < numBloques; i++) {
                 tempEscritura=compresor.comprimirBloque(file.getNextDataBlock());
                 System.out.println("Bloque: " + (i+1) + " " + java.util.Arrays.toString(tempEscritura));
@@ -83,11 +85,15 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
 
             System.err.println("Tamaño de la cabecera: " + fIn.getHeader().length);
             System.err.println("Tamaño del bloque: " + fIn.getBlockSize() );
+
+            System.err.println("Posición: " + fIn.getCurrentPos());
+            System.err.println("First Block Data: " + java.util.Arrays.toString(fIn.getCurrentDataBlock()));
+
             int j=1;
 
             while (fIn.isNextDataBlock()) {
-                //System.out.println("Bloque: " + j + ":" + fIn.getCurrentPos() + " " + java.util.Arrays.toString(fIn.getNextCoeficientesBlock()));
-                System.out.println("Bloque: " + j + ":" + fIn.getCurrentPos() + " " + java.util.Arrays.toString(fIn.getNextDataBlock()));
+                System.out.println("Bloque: " + j + ":" + fIn.getCurrentPos() + " " + java.util.Arrays.toString(fIn.getNextCoeficientesBlock()));
+                //System.out.println("Bloque: " + j + ":" + fIn.getCurrentPos() + " " + java.util.Arrays.toString(fIn.getNextDataBlock()));
                 j++;
             }
 

@@ -86,7 +86,7 @@ public class FileManager {
                     System.err.println(java.util.Arrays.toString(getHeader()));
                     currentPos = headerSize;
                     i = 0;
-                    if (type.equals("KL1")) {
+                    if (type.equals("KL1") || type.equals("kl1")) {
                         String compfactor = "", polDe = "", scaleFact = "";
                         while (i < bytes.length && bytes[i] != 13) {
                             compfactor += (char) bytes[i];
@@ -201,7 +201,8 @@ public class FileManager {
             if ((fileSize - currentPos) < blockSize) {
                 currentBlockSize = (int) (fileSize - currentPos);
             }
-            currentDataBlock = new byte[blockSize];
+            if (currentDataBlock == null)
+                currentDataBlock = new byte[blockSize];
             System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, currentBlockSize);
             //Copies an array from the specified source array, beginning at the specified position, to the specified position of the destination array.
         } else {
@@ -299,5 +300,13 @@ public class FileManager {
         } else {
             System.err.println("El archivo se abrio en modo lectura");
         }
+    }
+
+    public byte[] getCurrentDataBlock(){
+        if (currentDataBlock == null){
+            currentDataBlock = new byte[blockSize];
+        }
+        System.arraycopy(bytes, (int)currentPos, currentDataBlock, 0, blockSize);
+        return currentDataBlock;
     }
 }
