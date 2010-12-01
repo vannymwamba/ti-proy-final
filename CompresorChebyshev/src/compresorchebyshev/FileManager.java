@@ -28,34 +28,99 @@ public class FileManager {
     private byte[] currentDataBlock;
     private int currentBlockSize;
     private int blockSize;
+    private long polDegree;
+    private long compresionFactor;
+    private long scaleFactor;
+    private boolean write;
+
+    public long getCompresionFactor() {
+        return compresionFactor;
+    }
+
+    public void setCompresionFactor(long compresionFactor) {
+        this.compresionFactor = compresionFactor;
+    }
+
+    public long getDegree() {
+        return polDegree;
+    }
+
+    public void setDegree(long polDegree) {
+        this.polDegree = polDegree;
+    }
+
+    public long getScaleFactor() {
+        return scaleFactor;
+    }
+
+    public void setScaleFactor(long scaleFactor) {
+        this.scaleFactor = scaleFactor;
+    }
 
     /**
      * Creates  new Object FileManager that will operate with the file given in fName
      * @param fName
      * The file path
      */
-    public FileManager(String fName) {
+   /*public FileManager(String fName){
+        new FileManager(fName,false);
+    }
+*/
+    public FileManager(String fName, boolean write) {
         file = new File(fName);
-
+        this.write = write;
         if(fName.contains(".")){
 
             type = fName.split("\\.")[1];
 
-            if (!type.equals("kl1")){
-                try {
+            try {
+                if (!write){
                     readFile();
-                    currentPos = 0;
 
-                    if (type.equals("wav")) {
-                        headerSize = 44;
-                        currentPos = headerSize;
+                    int i = 0;
+                    while (i < bytes.length-6 && headerSize == 0){
+                        if (bytes[i] == (byte)'d' && bytes[i+1] == (byte)'a' && bytes[i+2] == (byte)'t' && bytes[i+3] == (byte)'a' && bytes[i+4] == (byte)0x00 && bytes[i+5] == 0x40 && bytes[i+6] == 0x01)
+                            headerSize =  i + 7;
+                        i++;
                     }
 
-                } catch (IOException e) {
-                    System.err.println("Ocurrio un error al recuperar los datos del archivo");
-                    System.err.println(e.toString());
-                    bytes = null;
+                    currentPos = headerSize;
+                    i = 0;
+                    if (type.equals("kl1")){
+                        String compfactor = "", polDe = "", scaleFact = "";
+                        while ( i < bytes.length && bytes[i] != 13){
+                            compfactor += (char) bytes[i];
+                            i++;
+                        }
+                        i++;
+                        compresionFactor = Long.decode(compfactor);
+
+                        while ( i < bytes.length && bytes[i] != 13){
+                            polDe += (char) bytes[i];
+                            i++;
+                        }
+                        i++;
+
+                        polDegree = Long.decode(polDe);
+
+                        while ( i < bytes.length - 3 && bytes[i] != (byte)'R'){
+                            scaleFact += (char) bytes[i];
+                            i++;
+                        }
+                        i = 0;
+                        scaleFactor = Long.decode(scaleFact);
+
+                        blockSize = (int)((polDegree + 1) * 3);
+
+                        if (file.exists())
+                            file.delete();
+                    }
                 }
+
+            } catch (IOException e) {
+                System.err.println("Ocurrio un error al recuperar los datos del archivo");
+                System.err.println(e.toString());
+                bytes = null;
             }
         }
     }
@@ -144,6 +209,18 @@ public class FileManager {
         return currentDataBlock;
     }
 
+    public Coeficiente[] getNextCoeficientesBlock(){
+        Coeficiente[] result = new Coeficiente[blockSize/3];
+        byte[] coef = new byte[3];
+        getNextDataBlock();
+
+        for (int i = 0; i< currentDataBlock.length; i=i+3){
+            System.arraycopy(currentDataBlock, i, coef, 0, 2);
+            result[i/3] = new Coeficiente(coef);
+        }
+
+        return result;
+    }
     /**
      * Verify if there are any available blocks to read
      * @return
@@ -194,23 +271,29 @@ public class FileManager {
     }
 
     public void appendData(byte[] data){
-        try{
-            OutputStream os = new FileOutputStream(file,true);
-            os.write(data);
-            os.close();
-        }catch(IOException e){
-            System.err.println("Couldn't write the data");
-        }
+        if (write){
+            try{
+                OutputStream os = new FileOutputStream(file,true);
+                os.write(data);
+                os.close();
+            }catch(IOException e){
+                System.err.println("Couldn't write the data");
+            }
+        }else
+            System.err.println("El archivo se abrio en modo lectura");
     }
 
     public void appendData(String data){
-        try{
-            OutputStream os = new FileOutputStream(file,true);
-            DataOutputStream dos = new DataOutputStream(os);
-            dos.writeBytes(data);
-            os.close();
-        }catch(IOException e){
-            System.err.println("Couldn't write the data");
-        }
+        if (write){
+            try{
+                OutputStream os = new FileOutputStream(file,true);
+                DataOutputStream dos = new DataOutputStream(os);
+                dos.writeBytes(data);
+                os.close();
+            }catch(IOException e){
+                System.err.println("Couldn't write the data");
+            }
+        }else
+            System.err.println("El archivo se abrio en modo lectura");
     }
 }
