@@ -17,7 +17,6 @@ public class Compressor {
     private int FE;
     private int muestrasXBloque;
     private Spline spl;
-    
 
     public Compressor(int GP, int FC, int FE) {
         this.GP = GP;
@@ -34,15 +33,6 @@ public class Compressor {
      */
     public Compressor() {
         spl = new Spline();
-    }
-
-    public Coeficiente[] calcularCoeficientes(int[] samples, int GP, int FC) {
-        this.GP = GP;
-        this.FC = FC;
-        muestrasXBloque = (int) ((GP + 1) * FC * 3) / 2;//((24*(GP+1)*2)/8*FC)/4
-        System.out.println("Muestras: "+muestrasXBloque);
-        spl.setpN(muestrasXBloque);
-        return calcularCoeficientes(samples);
     }
 
     public Coeficiente[] calcularCoeficientes(int[] samples) {
@@ -79,13 +69,9 @@ public class Compressor {
         byte[] canalDer, canalIzq;
         int i, j;
         int[] muestrasDer, muestrasIzq;
-        //Para debuggear
-        int numMuestras = arreglo.length / 4;
-        long tamArchivoOrig = arreglo.length;
-        long tamArchivoComp = tamArchivoOrig / FC;
 
-        canalDer = new byte[numMuestras * 2];
-        canalIzq = new byte[numMuestras * 2];
+        canalDer = new byte[muestrasXBloque * 2];
+        canalIzq = new byte[muestrasXBloque * 2];
         /*
          * Rellenamos los dos arreglos uno por cada canal e invertimos bytes para
          * poder convertir a Integer posteriormente
@@ -105,27 +91,28 @@ public class Compressor {
         /*
          * Convertimos los bytes en Integer
          */
-        muestrasDer = new int[numMuestras];
-        muestrasIzq = new int[numMuestras];
+        muestrasDer = new int[muestrasXBloque];
+        muestrasIzq = new int[muestrasXBloque];
         j = 0;
         for (i = 0; i < canalDer.length; i = i + 2) {
-            muestrasDer[j] = bytesAEnteroCompDos(canalDer[i], canalDer[i+1]);
-            muestrasIzq[j] = bytesAEnteroCompDos(canalIzq[i], canalIzq[i+1]);
+            muestrasDer[j] = bytesAEnteroCompDos(canalDer[i], canalDer[i + 1]);
+            muestrasIzq[j] = bytesAEnteroCompDos(canalIzq[i], canalIzq[i + 1]);
             j++;
         }
 
-        //obtener coeficientes compresor y spline para un bloque
-        int[] bloque = new int[muestrasXBloque];
-        for (i = 0; i < muestrasXBloque; i++) {
-            bloque[i] = muestrasDer[i];
+        /*
+         * Obtener coeficientes compresor y spline para un bloque
+         */
+
+        Coeficiente[] coefDer = calcularCoeficientes(muestrasDer);
+        Coeficiente[] coefIzq = calcularCoeficientes(muestrasIzq);
+        for (i = 0; i < coefDer.length; i++) {
+            System.out.println("Coeficientes Canal Derecho: "+coefDer[i]+
+                             "\nCoeficientes Canal Izquierdo: "+coefIzq[i]);
+
         }
-        //Compressor comp = new Compressor(GP, muestrasXBloque);
-        Coeficiente[] coef = calcularCoeficientes(bloque);
-        for (i = 0; i < coef.length; i++) {
-            System.out.println(coef[i]);
-        }
-        return coef;
-        
+        return coefDer;
+
     }
 
     /**
@@ -148,7 +135,4 @@ public class Compressor {
     public int getMuestrasXBloque() {
         return muestrasXBloque;
     }
-
-
-
 }

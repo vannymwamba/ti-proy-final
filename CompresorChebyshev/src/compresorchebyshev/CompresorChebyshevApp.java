@@ -52,7 +52,7 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             int i;
             long numBloques;
             Coeficiente[] tempEscritura;
-            file.setBlockSize(compresor.getMuestrasXBloque() * 8);
+            file.setBlockSize(compresor.getMuestrasXBloque() * 4);
             tempEscritura= new Coeficiente[compresor.getMuestrasXBloque()];
             numBloques=(file.getFileSize() -44) / file.getBlockSize();
 
@@ -77,5 +77,9 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             System.err.println("Error al comprimir el archivo");
             System.err.println(e.toString());
         }
+    }
+    public void descomprimir(String path){
+        Descompresor desc = new Descompresor();
+        desc.doubleToBytes(3.0);
     }
 }
