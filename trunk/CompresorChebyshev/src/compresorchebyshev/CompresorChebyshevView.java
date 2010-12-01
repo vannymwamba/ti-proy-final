@@ -53,6 +53,10 @@ public class CompresorChebyshevView extends FrameView {
         spnFC = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        txtPathDesc = new javax.swing.JTextField();
+        btnExaminarDesc = new javax.swing.JButton();
+        btnDescomprimir = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -114,7 +118,7 @@ public class CompresorChebyshevView extends FrameView {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtPath, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+                        .addComponent(txtPath, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnExaminar))
                     .addComponent(btnComprimir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -154,15 +158,60 @@ public class CompresorChebyshevView extends FrameView {
 
         jPanel2.setName("jPanel2"); // NOI18N
 
+        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setName("jLabel4"); // NOI18N
+
+        txtPathDesc.setName("txtPathDesc"); // NOI18N
+
+        btnExaminarDesc.setAction(actionMap.get("mostrarExplorador")); // NOI18N
+        btnExaminarDesc.setText(resourceMap.getString("btnExaminarDesc.text")); // NOI18N
+        btnExaminarDesc.setName("btnExaminarDesc"); // NOI18N
+        btnExaminarDesc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExaminarDescActionPerformed(evt);
+            }
+        });
+
+        btnDescomprimir.setText(resourceMap.getString("btnDescomprimir.text")); // NOI18N
+        btnDescomprimir.setName("btnDescomprimir"); // NOI18N
+        btnDescomprimir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDescomprimirMouseClicked(evt);
+            }
+        });
+        btnDescomprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDescomprimirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 678, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(txtPathDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnExaminarDesc))
+                    .addComponent(btnDescomprimir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 179, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPathDesc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExaminarDesc))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                .addComponent(btnDescomprimir)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel2.TabConstraints.tabTitle"), jPanel2); // NOI18N
@@ -214,25 +263,49 @@ public class CompresorChebyshevView extends FrameView {
 
     //Debe llamar a un método de App!!
     private void btnComprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComprimirMouseClicked
-        CompresorChebyshevApp.getApplication().comprimir(txtPath.getText(),spnGP.getValue(), spnFC.getValue());
+        CompresorChebyshevApp.getApplication().comprimir(txtPath.getText(), spnGP.getValue(), spnFC.getValue());
 
     }//GEN-LAST:event_btnComprimirMouseClicked
 
     private void btnExaminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExaminarActionPerformed
+        bandera = true;
         panExplorador.setCurrentDirectory(new File(System.getProperty("user.dir")));
+
         panExplorador.showOpenDialog(this.getComponent());
     }//GEN-LAST:event_btnExaminarActionPerformed
 
     private void panExploradorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panExploradorActionPerformed
-        txtPath.setText(panExplorador.getSelectedFile().getAbsolutePath());
+        if (bandera) {
+            txtPath.setText(panExplorador.getSelectedFile().getAbsolutePath());
+        } else {
+            txtPathDesc.setText(panExplorador.getSelectedFile().getAbsolutePath());
+        }
     }//GEN-LAST:event_panExploradorActionPerformed
+
+    private void btnExaminarDescActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExaminarDescActionPerformed
+        panExplorador.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        panExplorador.showOpenDialog(this.getComponent());
+
+    }//GEN-LAST:event_btnExaminarDescActionPerformed
+
+    private void btnDescomprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDescomprimirMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDescomprimirMouseClicked
+
+    private void btnDescomprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescomprimirActionPerformed
+       // leer archivo y obtener valores
+        CompresorChebyshevApp.getApplication().descomprimir(txtPathDesc.getText());
+    }//GEN-LAST:event_btnDescomprimirActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnComprimir;
+    private javax.swing.JButton btnDescomprimir;
     private javax.swing.JButton btnExaminar;
+    private javax.swing.JButton btnExaminarDesc;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedPane1;
@@ -242,6 +315,8 @@ public class CompresorChebyshevView extends FrameView {
     private javax.swing.JSpinner spnFC;
     private javax.swing.JSpinner spnGP;
     private javax.swing.JTextField txtPath;
+    private javax.swing.JTextField txtPathDesc;
     // End of variables declaration//GEN-END:variables
     private JDialog aboutBox;
+    private boolean bandera;
 }
