@@ -78,15 +78,19 @@ public class FileManager {
                     readFile();
                     int i = 0;
                     while (i < bytes.length - 7 && headerSize == 0){
-                        if (bytes[i] == (byte)'d' && bytes[i+1] == (byte)'a' && bytes[i+2] == (byte)'t' && bytes[i+3] == (byte)'a' && bytes[i+4] == (byte)0x00 && bytes[i+5] == 0x40 && bytes[i+6] == 0x01 && bytes[i+7] == 0x00)
+                        if (bytes[i] == (byte)'d' && bytes[i+1] == (byte)'a' && bytes[i+2] == (byte)'t' && bytes[i+3] == (byte)'a')
                             headerSize =  i + 8;
                         i++;
                     }
 
-                    System.err.println(java.util.Arrays.toString(getHeader()));
                     currentPos = headerSize;
                     i = 0;
                     if (type.equals("KL1") || type.equals("kl1")) {
+
+                        /*if(type.equals("KL1")){
+                            headerSize -= 3;
+                            currentPos = headerSize;
+                        }*/
                         String compfactor = "", polDe = "", scaleFact = "";
                         while (i < bytes.length && bytes[i] != 13) {
                             compfactor += (char) bytes[i];
@@ -177,6 +181,17 @@ public class FileManager {
     public byte[] getHeader() {
         byte header[] = new byte[headerSize];
         System.arraycopy(bytes, 0, header, 0, headerSize);
+        return header;
+    }
+
+    public byte[] getWavHeader() {
+        byte header[];
+        int i = 0;
+        while (i < bytes.length - 3 && bytes[i] != (byte) 'R')
+            i++;
+        header = new byte[headerSize - i];
+        System.arraycopy(bytes, i, header, 0, headerSize - i);
+
         return header;
     }
 
