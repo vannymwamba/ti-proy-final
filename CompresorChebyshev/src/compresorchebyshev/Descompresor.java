@@ -15,16 +15,13 @@ import java.util.logging.Logger;
 public class Descompresor {
 
     private int muestrasXBloque;
-    private int FC;
     private int GP;
     private double[] X;
 
-    public Descompresor(){
-
+    public Descompresor() {
     }
 
-    public Descompresor(int GP, int FC, int muestrasXBloque) {
-        this.FC = FC;
+    public Descompresor(int GP, int muestrasXBloque) {
         this.GP = GP;
         this.muestrasXBloque = muestrasXBloque;
         X = new double[muestrasXBloque];//arreglo de la variable independiente
@@ -39,51 +36,62 @@ public class Descompresor {
 
     public byte[] descomprimirBloque(Coeficiente[] bloque) {
         byte[] resultado = new byte[muestrasXBloque * 4];
-        double[] coefDer = new double[GP+1],coefIzq =  new double[GP+1];// flata obtener los coeficientes del bloque!!
-        double[] muestrasDer =  new double[muestrasXBloque];
-        double[] muestrasIzq =  new double[muestrasXBloque];
+        double[] coefDer = new double[GP + 1], coefIzq = new double[GP + 1];// flata obtener los coeficientes del bloque!!
+        double[] muestrasDer = new double[muestrasXBloque];
+        double[] muestrasIzq = new double[muestrasXBloque];
         double arccos;
-        int i,j,k;
+        int i, j, k;
 
         //Llenar los arreglos de coeficientes
-        j=k=0;
-        for(i=0;i<bloque.length;i++){
-            if(j<GP+1 && i<bloque.length/2){
-                coefIzq[j]=bloque[i].toDouble();
+        j = k = 0;
+        for (i = 0; i < bloque.length; i++) {
+            if (j < GP + 1 && i < bloque.length / 2) {
+                coefIzq[j] = bloque[i].toDouble();
                 j++;
-            } else if(k<GP+1){
-                coefIzq[k]=bloque[i].toDouble();
+            } else if (k < GP + 1) {
+                coefDer[k] = bloque[i].toDouble();
                 k++;
             }
         }
-        //recuperar muestras
-        k=0;
-        for(i=0;i<muestrasXBloque;i++){
-            arccos=Math.acos(X[i]);
-            muestrasIzq[i]=coefDer[1]+coefDer[2]*X[i];
-            for(j=3;j<GP+1;j++){
-                muestrasIzq[i]+=coefDer[j]*Math.cos((j-1)*arccos);
-            }muestrasDer[i]=coefDer[1]+coefDer[2]*X[i];
-            for(j=3;j<GP+1;j++){
-                muestrasDer[i]+=coefDer[j]*Math.cos((j-1)*arccos);
+
+        /*Codigo de prueba!!
+        j = k = 0;
+        for (i = 0; i < 2*GP +2; i++) {
+        if (j < GP + 1 && (i + 1) % 2 == 1) {
+        coefIzq[j] = i;
+        j++;
+        } else if (k < GP + 1) {
+        coefDer[k] = i;
+        k++;
+        }
+        }*/
+
+        //Recuperar muestras
+        k = 0;
+        for (i = 0; i < muestrasXBloque; i++) {
+            arccos = Math.acos(X[i]);
+            muestrasIzq[i] = coefIzq[1] + coefIzq[2] * X[i];
+            for (j = 3; j < GP + 1; j++) {
+                muestrasIzq[i] += coefIzq[j] * Math.cos((j - 1) * arccos);
             }
-            System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado,k , 2);
-            k+=2;
-            muestrasDer[i]=coefDer[1]+coefDer[2]*X[i];
-            for(j=3;j<GP+1;j++){
-                muestrasDer[i]+=coefDer[j]*Math.cos((j-1)*arccos);
+            System.arraycopy(doubleToIntToBytes(muestrasIzq[i]), 0, resultado, k, 2);
+            k += 2;
+            muestrasDer[i] = coefDer[1] + coefDer[2] * X[i];
+            for (j = 3; j < GP + 1; j++) {
+                muestrasDer[i] += coefDer[j] * Math.cos((j - 1) * arccos);
             }
-            System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado,k , 2);
-            k+=2;
+            System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado, k, 2);
+            k += 2;
+
         }
         return resultado;
     }
 
-    public byte[] doubleToIntToBytes(double muestra){
+    public byte[] doubleToIntToBytes(double muestra) {
         byte[] resultado = new byte[2];
-        int mues = (int)muestra;
+        int mues = (int) muestra;
         resultado[0] = (byte) (mues & 0xff);
-        mues>>=8;
+        mues >>= 8;
         resultado[1] = (byte) (mues & 0xff);
         return resultado;
     }
