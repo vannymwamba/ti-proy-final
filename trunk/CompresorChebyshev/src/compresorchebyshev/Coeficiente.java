@@ -184,7 +184,7 @@ public class Coeficiente {
 
     }
 
-    private double toDouble(){
+    public double toDouble(){
         double dValue;
         dValue = Math.pow(2, getExponent()) * (1 + getMantiza());
 

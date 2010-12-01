@@ -67,8 +67,9 @@ public class Compressor {
      */
     public Coeficiente[] comprimirBloque(byte[] arreglo) throws IOException {
         byte[] canalDer, canalIzq;
-        int i, j;
+        int i, j,k;
         int[] muestrasDer, muestrasIzq;
+        Coeficiente[] coefDer, coefIzq, resultado;
 
         canalDer = new byte[muestrasXBloque * 2];
         canalIzq = new byte[muestrasXBloque * 2];
@@ -103,15 +104,23 @@ public class Compressor {
         /*
          * Obtener coeficientes compresor y spline para un bloque
          */
-
-        Coeficiente[] coefDer = calcularCoeficientes(muestrasDer);
-        Coeficiente[] coefIzq = calcularCoeficientes(muestrasIzq);
-        for (i = 0; i < coefDer.length; i++) {
-            System.out.println("Coeficientes Canal Derecho: "+coefDer[i]+
-                             "\nCoeficientes Canal Izquierdo: "+coefIzq[i]);
-
+        coefDer = calcularCoeficientes(muestrasDer);
+        coefIzq = calcularCoeficientes(muestrasIzq);
+        resultado = new Coeficiente[coefDer.length * 2];
+        j=0;
+        for (i = 0; i < 2 * coefDer.length; i++) {
+            if ((i + 1) % 2 == 1) {
+                resultado[i] = coefIzq[j];
+                j++;
+            } else {
+                resultado[i] = coefIzq[j];
+                j++;
+            }
+            System.out.println("Coeficientes Canal Derecho: " + coefDer[i]
+                    + "\nCoeficientes Canal Izquierdo: " + coefIzq[i]);
         }
-        return coefDer;
+
+        return resultado;
 
     }
 
