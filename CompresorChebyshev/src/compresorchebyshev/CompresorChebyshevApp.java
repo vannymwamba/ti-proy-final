@@ -82,6 +82,10 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             while (fIn.isNextDataBlock()){
                 System.out.println("\n" + java.util.Arrays.toString(fIn.getNextCoeficientesBlock()));
             }
+
+            for (i = 0; i <tempEscritura.length; i++){
+                System.out.print(tempEscritura[i] + " ");
+            }
             
             //Fin del código de prueba
 
