@@ -47,7 +47,7 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
 
     public static void comprimir(String path, Object GP, Object FC) {
         try {
-            FileManager file = new FileManager(path);
+            FileManager file = new FileManager(path, false);
             Compressor compresor = new Compressor(Integer.parseInt(GP.toString()), Integer.parseInt(FC.toString()), 0);
             int i;
             long numBloques;
@@ -56,7 +56,7 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             tempEscritura= new Coeficiente[compresor.getMuestrasXBloque()];
             numBloques=(file.getFileSize() -44) / file.getBlockSize();
 
-            FileManager fOut = new FileManager("salida.kl1");
+            FileManager fOut = new FileManager("salida.kl1", true);
 
             fOut.appendData(FC.toString());
             fOut.appendData((byte)0x0D);
@@ -72,6 +72,18 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             }
 
             System.out.println("Compresión de todos los bloques finalizada");
+
+            // Código de prueba para recuperar el archivo comprimido
+            FileManager fIn = new FileManager("salida.kl1", false);
+            System.out.println("Grado: " + fIn.getDegree());
+            System.out.println("Factor de comp: " + fIn.getCompresionFactor());
+            System.out.println("Factor de escala: " + fIn.getScaleFactor());
+
+            while (fIn.isNextDataBlock()){
+                System.out.println("\n" + java.util.Arrays.toString(fIn.getNextCoeficientesBlock()));
+            }
+            
+            //Fin del código de prueba
 
         } catch (IOException e) {
             System.err.println("Error al comprimir el archivo");

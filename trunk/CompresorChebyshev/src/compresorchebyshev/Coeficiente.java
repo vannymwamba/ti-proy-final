@@ -34,7 +34,7 @@ public class Coeficiente {
     }
 
     /**
-     * Construrtor that recieves the hexadecimal representation of the float number
+     * Constructor that receives the hexadecimal representation of the float number
      * @param value
      */
     public Coeficiente(long value){
