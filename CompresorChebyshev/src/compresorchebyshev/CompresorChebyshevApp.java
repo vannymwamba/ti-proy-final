@@ -88,21 +88,24 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
         //rellenar con métodos de FileManager y Descompresor!!
         FileManager fIn = new FileManager(path, false);
         int muestrasXBloque = (int) ((fIn.getDegree() + 1) * fIn.getCompresionFactor() * 3) / 2;
-        byte[] res = new byte[muestrasXBloque * 4 * (int)fIn.getCompresionFactor()];
+        //byte[] res = new byte[muestrasXBloque * 4 * (int)fIn.getCompresionFactor()];
+        byte[] res = new byte[(int)(fIn.getFileSize() * fIn.getCompresionFactor())];
         Coeficiente[] aux = fIn.getNextCoeficientesBlock();
         Descompresor desc = new Descompresor((int) fIn.getDegree(), muestrasXBloque);
+
+        FileManager fOut = new FileManager("descomprimido.wav", true);
+        fOut.appendData(fIn.getWavHeader());
+
         int j = 0;
         while (aux != null) {
             //System.arraycopy(desc.descomprimirBloque(aux), 0, res, j, muestrasXBloque * 4);
+            fOut.appendData(desc.descomprimirBloque(aux));
             j += muestrasXBloque * 4;
             aux = fIn.getNextCoeficientesBlock();
         }
-        System.out.println("Descomprimir");
-        FileManager fOut = new FileManager("descomprimido.wav", true);
 
-        fOut.appendData(fIn.getWavHeader());
-        fOut.appendData(res);
 
+        System.err.println(" ===[ La descompresión ha finalizado ] === ");
         /*//código de prueba   muestrasXBloque = (int) ((GP + 1) * FC * 3) / 2;
         System.out.println("Descomprimir");
         Coeficiente[] alpha = new Coeficiente[2];
