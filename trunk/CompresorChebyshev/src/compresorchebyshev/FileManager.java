@@ -62,40 +62,41 @@ public class FileManager {
      * @param fName
      * The file path
      */
-   /*public FileManager(String fName){
-        new FileManager(fName,false);
+    /*public FileManager(String fName){
+    new FileManager(fName,false);
     }
-*/
+     */
     public FileManager(String fName, boolean write) {
         file = new File(fName);
         this.write = write;
-        if(fName.contains(".")){
+        if (fName.contains(".")) {
 
             type = fName.split("\\.")[1];
 
             try {
-                if (!write){
+                if (!write) {
                     readFile();
 
                     int i = 0;
-                    while (i < bytes.length-6 && headerSize == 0){
-                        if (bytes[i] == (byte)'d' && bytes[i+1] == (byte)'a' && bytes[i+2] == (byte)'t' && bytes[i+3] == (byte)'a' && bytes[i+4] == (byte)0x00 && bytes[i+5] == 0x40 && bytes[i+6] == 0x01)
-                            headerSize =  i + 7;
+                    while (i < bytes.length - 6 && headerSize == 0) {
+                        if (bytes[i] == (byte) 'd' && bytes[i + 1] == (byte) 'a' && bytes[i + 2] == (byte) 't' && bytes[i + 3] == (byte) 'a' && bytes[i + 4] == (byte) 0x00 && bytes[i + 5] == 0x40 && bytes[i + 6] == 0x01) {
+                            headerSize = i + 7;
+                        }
                         i++;
                     }
 
                     currentPos = headerSize;
                     i = 0;
-                    if (type.equals("kl1")){
+                    if (type.equals("KL1")) {
                         String compfactor = "", polDe = "", scaleFact = "";
-                        while ( i < bytes.length && bytes[i] != 13){
+                        while (i < bytes.length && bytes[i] != 13) {
                             compfactor += (char) bytes[i];
                             i++;
                         }
                         i++;
                         compresionFactor = Long.decode(compfactor);
 
-                        while ( i < bytes.length && bytes[i] != 13){
+                        while (i < bytes.length && bytes[i] != 13) {
                             polDe += (char) bytes[i];
                             i++;
                         }
@@ -103,17 +104,18 @@ public class FileManager {
 
                         polDegree = Long.decode(polDe);
 
-                        while ( i < bytes.length - 3 && bytes[i] != (byte)'R'){
+                        while (i < bytes.length - 3 && bytes[i] != (byte) 'R') {
                             scaleFact += (char) bytes[i];
                             i++;
                         }
                         i = 0;
                         scaleFactor = Long.decode(scaleFact);
 
-                        blockSize = (int)((polDegree + 1) * 3);
+                        blockSize = (int) ((polDegree + 1) * 3);
 
-                        if (file.exists())
-                            file.delete();
+                        if (file.exists()) {
+                            //file.delete();
+                        }
                     }
                 }
 
@@ -196,7 +198,7 @@ public class FileManager {
             }
 
             //Sets the available bytes size to read
-            currentBlockSize=blockSize;
+            currentBlockSize = blockSize;
             if ((fileSize - currentPos) < blockSize) {
                 currentBlockSize = (int) (fileSize - currentPos);
             }
@@ -209,18 +211,19 @@ public class FileManager {
         return currentDataBlock;
     }
 
-    public Coeficiente[] getNextCoeficientesBlock(){
-        Coeficiente[] result = new Coeficiente[blockSize/3];
+    public Coeficiente[] getNextCoeficientesBlock() {
+        Coeficiente[] result = new Coeficiente[blockSize / 3];
         byte[] coef = new byte[3];
         getNextDataBlock();
 
-        for (int i = 0; i< currentDataBlock.length; i=i+3){
+        for (int i = 0; i < currentDataBlock.length; i = i + 3) {
             System.arraycopy(currentDataBlock, i, coef, 0, 2);
-            result[i/3] = new Coeficiente(coef);
+            result[i / 3] = new Coeficiente(coef);
         }
 
         return result;
     }
+
     /**
      * Verify if there are any available blocks to read
      * @return
@@ -260,40 +263,42 @@ public class FileManager {
         return fileSize;
     }
 
-    public void appendData(byte data){
-        try{
-            OutputStream os = new FileOutputStream(file,true);
+    public void appendData(byte data) {
+        try {
+            OutputStream os = new FileOutputStream(file, true);
             os.write(data);
             os.close();
-        }catch(IOException e){
+        } catch (IOException e) {
             System.err.println("Couldn't write the data");
         }
     }
 
-    public void appendData(byte[] data){
-        if (write){
-            try{
-                OutputStream os = new FileOutputStream(file,true);
+    public void appendData(byte[] data) {
+        if (write) {
+            try {
+                OutputStream os = new FileOutputStream(file, true);
                 os.write(data);
                 os.close();
-            }catch(IOException e){
+            } catch (IOException e) {
                 System.err.println("Couldn't write the data");
             }
-        }else
+        } else {
             System.err.println("El archivo se abrio en modo lectura");
+        }
     }
 
-    public void appendData(String data){
-        if (write){
-            try{
-                OutputStream os = new FileOutputStream(file,true);
+    public void appendData(String data) {
+        if (write) {
+            try {
+                OutputStream os = new FileOutputStream(file, true);
                 DataOutputStream dos = new DataOutputStream(os);
                 dos.writeBytes(data);
                 os.close();
-            }catch(IOException e){
+            } catch (IOException e) {
                 System.err.println("Couldn't write the data");
             }
-        }else
+        } else {
             System.err.println("El archivo se abrio en modo lectura");
+        }
     }
 }

@@ -98,12 +98,27 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
 
     public void descomprimir(String path) {
         //rellenar con métodos de FileManager y Descompresor!!
+        FileManager fIn = new FileManager(path, false);
+        int muestrasXBloque = (int) ((fIn.getDegree() + 1) * fIn.getCompresionFactor() * 3) / 2;
+        byte[] res = new byte[muestrasXBloque * 4 * (int)fIn.getCompresionFactor()];
+        Coeficiente[] aux = fIn.getNextCoeficientesBlock();
+        Descompresor desc = new Descompresor((int) fIn.getDegree(), muestrasXBloque);
+        int j = 0;
+        while (aux != null) {
+            //System.arraycopy(desc.descomprimirBloque(aux), 0, res, j, muestrasXBloque * 4);
+            j += muestrasXBloque * 4;
+            aux = fIn.getNextCoeficientesBlock();
+        }
+        System.out.println("Descomprimir");
 
-        //código de prueba
+
+        /*//código de prueba   muestrasXBloque = (int) ((GP + 1) * FC * 3) / 2;
         System.out.println("Descomprimir");
         Coeficiente[] alpha = new Coeficiente[2];
         Descompresor desc = new Descompresor(5, 72);
         byte[] res = new byte[4*72];
         res = desc.descomprimirBloque(alpha);
+         */
+
     }
 }
