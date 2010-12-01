@@ -30,7 +30,7 @@ public class Coeficiente {
      */
     public Coeficiente(byte[] byteArray){
         value = new byte[3];
-        System.arraycopy(value, 0, this.value, 0, 3);
+        System.arraycopy(byteArray, 0, value, 0, 3);
     }
 
     /**
