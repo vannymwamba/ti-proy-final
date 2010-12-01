@@ -14,11 +14,11 @@ public class Compressor {
 
     private int GP;
     private int FC;
-    private int FE;
+    private double FE;
     private int muestrasXBloque;
     private Spline spl;
 
-    public Compressor(int GP, int FC, int FE) {
+    public Compressor(int GP, int FC, double FE) {
         this.GP = GP;
         this.FC = FC;
         this.FE = FE;
@@ -46,7 +46,7 @@ public class Compressor {
         for (i = 1; i < muestrasXBloque; i++) {
             coef[0] = coef[0] + Ybar[i];
         }
-        coef[0] = coef[0] / muestrasXBloque;
+        coef[0] = coef[0]*FE / muestrasXBloque;
 
         result[0] = new Coeficiente(coef[0]);
         for (j = 1; j < (GP + 1); j++) {
@@ -54,7 +54,7 @@ public class Compressor {
             for (i = 0; i < muestrasXBloque; i++) {
                 coef[j] = coef[j] + Ybar[i] * Math.cos((j - 1) * A[i]);
             }
-            coef[j] = coef[j] * 2 / muestrasXBloque;
+            coef[j] = coef[j] * 2 *FE/ muestrasXBloque;
             result[j] = new Coeficiente(coef[j]);
         }
         return result;
@@ -89,9 +89,8 @@ public class Compressor {
             j++;
         }
 
-        /*
-         * Convertimos los bytes en Integer
-         */
+        //Convertimos los bytes en Integer
+         
         muestrasDer = new int[muestrasXBloque];
         muestrasIzq = new int[muestrasXBloque];
         j = 0;
@@ -101,9 +100,9 @@ public class Compressor {
             j++;
         }
 
-        /*
-         * Obtener coeficientes compresor y spline para un bloque
-         */
+        
+        //Obtener coeficientes compresor y spline para un bloque
+         
         coefDer = calcularCoeficientes(muestrasDer);
         coefIzq = calcularCoeficientes(muestrasIzq);
         resultado = new Coeficiente[coefDer.length * 2];
