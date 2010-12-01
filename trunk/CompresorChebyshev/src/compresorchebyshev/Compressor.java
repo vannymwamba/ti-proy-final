@@ -107,17 +107,18 @@ public class Compressor {
         coefDer = calcularCoeficientes(muestrasDer);
         coefIzq = calcularCoeficientes(muestrasIzq);
         resultado = new Coeficiente[coefDer.length * 2];
-        j=0;
+        j=k=0;
         for (i = 0; i < 2 * coefDer.length; i++) {
             if ((i + 1) % 2 == 1) {
                 resultado[i] = coefIzq[j];
+                //System.out.println("\nCoeficientes Canal Izquierdo: " + coefIzq[j]);
                 j++;
             } else {
-                resultado[i] = coefIzq[j];
-                j++;
+                resultado[i] = coefDer[k];
+                //System.out.println("\nCoeficientes Canal Derecho: " + coefDer[k]);
+                k++;
             }
-            System.out.println("Coeficientes Canal Derecho: " + coefDer[i]
-                    + "\nCoeficientes Canal Izquierdo: " + coefIzq[i]);
+            
         }
 
         return resultado;
