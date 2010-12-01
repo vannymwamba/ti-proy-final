@@ -45,10 +45,10 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
     }
     //Crear Compressor y ejecutar compresión
 
-    public static void comprimir(String path, Object GP, Object FC) {
+    public static void comprimir(String path, Object GP, Object FC, String FE) {
         try {
             FileManager file = new FileManager(path, false);
-            Compressor compresor = new Compressor(Integer.parseInt(GP.toString()), Integer.parseInt(FC.toString()), 0);
+            Compressor compresor = new Compressor(Integer.parseInt(GP.toString()), Integer.parseInt(FC.toString()),Double.parseDouble(FE));
             int i;
             long numBloques;
             Coeficiente[] tempEscritura;
@@ -95,10 +95,6 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
                 System.out.println("Bloque: " + j + ":" + fIn.getCurrentPos() + " " + java.util.Arrays.toString(fIn.getNextCoeficientesBlock()));
                 //System.out.println("Bloque: " + j + ":" + fIn.getCurrentPos() + " " + java.util.Arrays.toString(fIn.getNextDataBlock()));
                 j++;
-            }
-
-            for (i = 0; i < tempEscritura.length; i++) {
-                System.out.print(tempEscritura[i] + " ");
             }
 
             //Fin del código de prueba
