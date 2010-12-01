@@ -95,7 +95,6 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
         }
     }
     public void descomprimir(String path){
-        Descompresor desc = new Descompresor();
-        desc.doubleToBytes(3.0);
+        //rellenar con métodos de FileManager y Descompresor!!
     }
 }
