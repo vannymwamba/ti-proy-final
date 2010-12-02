@@ -60,7 +60,8 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             tempEscritura = new Coeficiente[compresor.getMuestrasXBloque()];
             numBloques = (file.getFileSize() - file.getHeader().length) / file.getBlockSize();
 
-            FileManager fOut = new FileManager("salida.kl1", true);
+            String fOutName = path.substring(path.lastIndexOf("/")+1,path.lastIndexOf("."))+GP.toString()+"_"+FC.toString()+".KL1";
+            FileManager fOut = new FileManager(fOutName, true);
 
             fOut.appendData(FC.toString());
             fOut.appendData((byte) 0x0D);
@@ -101,19 +102,20 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
         Coeficiente[] aux = fIn.getNextCoeficientesBlock();
         Descompresor desc = new Descompresor((int) fIn.getDegree(),(int)fIn.getScaleFactor(), muestrasXBloque);
 
-        System.out.println("Escale factor: " + fIn.getScaleFactor());
-        FileManager fOut = new FileManager("descomprimido.wav", true);
+        String fOutName = path.substring(path.lastIndexOf("/")+1,path.lastIndexOf("_")-1)+".WAV";
+        FileManager fOut = new FileManager(fOutName, true);
         fOut.appendData(fIn.getWavHeader());
 
         int j = 0;
         while (aux != null) {
             //System.arraycopy(desc.descomprimirBloque(aux), 0, res, j, muestrasXBloque * 4);
             fOut.appendData(desc.descomprimirBloque(aux));
-            j += muestrasXBloque * 4;
+            j ++;
+            System.out.println("Descomprimiendo bloque: "+j);
             aux = fIn.getNextCoeficientesBlock();
         }
 
-
+        System.err.println(" ===[ Número de bloques: " +j+" ] === ");
         System.err.println(" ===[ La descompresión ha finalizado ] === ");
         /*//código de prueba   muestrasXBloque = (int) ((GP + 1) * FC * 3) / 2;
         System.out.println("Descomprimir");

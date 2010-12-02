@@ -11,7 +11,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.io.File;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Locale;
 
 /**
@@ -313,19 +312,19 @@ public class CompresorChebyshevView extends FrameView {
 
     //Debe llamar a un método de App!!
     private void btnComprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComprimirMouseClicked
-        CompresorChebyshevApp.getApplication().comprimir(txtPath.getText(), spnGP.getValue(), spnFC.getValue(),txtFE.getText());
- StringBuilder sb = new StringBuilder();
-   // Send all output to the Appendable object sb
+        CompresorChebyshevApp.getApplication().comprimir(txtPath.getText(), spnGP.getValue(), spnFC.getValue(), txtFE.getText());
+        StringBuilder sb = new StringBuilder();
+        // Send all output to the Appendable object sb
 
 
-   // Explicit argument indices may be used to re-order output.
+        // Explicit argument indices may be used to re-order output.
 
         NumberFormat formatter = NumberFormat.getPercentInstance(Locale.US);
 
         formatter.setMinimumFractionDigits(2);
 
-        txtOverFlow.setText(formatter.format((1.0 * CompresorChebyshevApp.getApplication().overflow / (CompresorChebyshevApp.getApplication().total > 0 ? CompresorChebyshevApp.getApplication().total : 1) )).toString());
-        txtUnderFlow.setText(formatter.format((1.0 * CompresorChebyshevApp.getApplication().underflow / (CompresorChebyshevApp.getApplication().total > 0 ? CompresorChebyshevApp.getApplication().total : 1) )).toString());
+        txtOverFlow.setText(formatter.format((1.0 * CompresorChebyshevApp.getApplication().overflow / (CompresorChebyshevApp.getApplication().total > 0 ? CompresorChebyshevApp.getApplication().total : 1))).toString());
+        txtUnderFlow.setText(formatter.format((1.0 * CompresorChebyshevApp.getApplication().underflow / (CompresorChebyshevApp.getApplication().total > 0 ? CompresorChebyshevApp.getApplication().total : 1))).toString());
 
     }//GEN-LAST:event_btnComprimirMouseClicked
 
@@ -345,9 +344,9 @@ public class CompresorChebyshevView extends FrameView {
     }//GEN-LAST:event_panExploradorActionPerformed
 
     private void btnExaminarDescActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExaminarDescActionPerformed
+        bandera=false;
         panExplorador.setCurrentDirectory(new File(System.getProperty("user.dir")));
         panExplorador.showOpenDialog(this.getComponent());
-
     }//GEN-LAST:event_btnExaminarDescActionPerformed
 
     private void btnDescomprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDescomprimirMouseClicked
@@ -358,7 +357,6 @@ public class CompresorChebyshevView extends FrameView {
        // leer archivo y obtener valores
         CompresorChebyshevApp.getApplication().descomprimir(txtPathDesc.getText());
     }//GEN-LAST:event_btnDescomprimirActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnComprimir;
     private javax.swing.JButton btnDescomprimir;

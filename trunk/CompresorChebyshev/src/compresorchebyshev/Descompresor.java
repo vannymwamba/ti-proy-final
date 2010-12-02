@@ -18,7 +18,7 @@ public class Descompresor {
     public Descompresor() {
     }
 
-    public Descompresor(int GP,int FE, int muestrasXBloque) {
+    public Descompresor(int GP, int FE, int muestrasXBloque) {
         this.GP = GP;
         this.FE = FE;
         this.muestrasXBloque = muestrasXBloque;
@@ -44,10 +44,20 @@ public class Descompresor {
         j = k = 0;
         for (i = 0; i < bloque.length; i++) {
             if (j < GP + 1 && i < bloque.length / 2) {
-                coefIzq[j] = bloque[i].toDouble();
+                if (bloque[i] != null) {
+                    coefIzq[j] = bloque[i].toDouble();
+                }
+                else{
+                    coefIzq[k]=0;
+                }
                 j++;
             } else if (k < GP + 1) {
-                coefDer[k] = bloque[i].toDouble();
+                if (bloque[i] != null) {
+                    coefDer[k] = bloque[i].toDouble();
+                }else{
+                    coefDer[k]=0;
+                }
+
                 k++;
             }
         }
@@ -60,15 +70,16 @@ public class Descompresor {
             for (j = 3; j < GP + 1; j++) {
                 muestrasIzq[i] += coefIzq[j] * Math.cos((j - 1) * arccos);
             }
-            System.arraycopy(doubleToIntToBytes(muestrasIzq[i]*FE), 0, resultado, k, 2);
+            muestrasIzq[i] = muestrasIzq[i] * FE;
+            System.arraycopy(doubleToIntToBytes(muestrasIzq[i]), 0, resultado, k, 2);
             k += 2;
             muestrasDer[i] = coefDer[1] + coefDer[2] * X[i];
             for (j = 3; j < GP + 1; j++) {
                 muestrasDer[i] += coefDer[j] * Math.cos((j - 1) * arccos);
             }
-            System.arraycopy(doubleToIntToBytes(muestrasDer[i]*FE), 0, resultado, k, 2);
+            muestrasDer[i] = muestrasDer[i] * FE;
+            System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado, k, 2);
             k += 2;
-
         }
         return resultado;
     }

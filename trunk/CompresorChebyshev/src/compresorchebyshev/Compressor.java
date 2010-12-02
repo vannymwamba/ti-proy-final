@@ -46,7 +46,7 @@ public class Compressor {
         for (i = 1; i < muestrasXBloque; i++) {
             coef[0] = coef[0] + Ybar[i];
         }
-        coef[0] = coef[0]*FE / muestrasXBloque;
+        coef[0] = coef[0] / FE / muestrasXBloque;
 
         result[0] = new Coeficiente(coef[0]);
         for (j = 1; j < (GP + 1); j++) {
@@ -54,8 +54,10 @@ public class Compressor {
             for (i = 0; i < muestrasXBloque; i++) {
                 coef[j] = coef[j] + Ybar[i] * Math.cos((j - 1) * A[i]);
             }
-            coef[j] = coef[j] * 2 *FE/ muestrasXBloque;
+            coef[j] = coef[j] * 2 / FE / muestrasXBloque;
+            System.out.println("Coeficiente: "+coef[j]);
             result[j] = new Coeficiente(coef[j]);
+            System.out.println("Regreso a double: "+result[j].toDouble());
         }
         return result;
     }
@@ -67,7 +69,7 @@ public class Compressor {
      */
     public Coeficiente[] comprimirBloque(byte[] arreglo) throws IOException {
         byte[] canalDer, canalIzq;
-        int i, j,k;
+        int i, j, k;
         int[] muestrasDer, muestrasIzq;
         Coeficiente[] coefDer, coefIzq, resultado;
 
@@ -90,7 +92,7 @@ public class Compressor {
         }
 
         //Convertimos los bytes en Integer
-         
+
         muestrasDer = new int[muestrasXBloque];
         muestrasIzq = new int[muestrasXBloque];
         j = 0;
@@ -100,13 +102,13 @@ public class Compressor {
             j++;
         }
 
-        
+
         //Obtener coeficientes compresor y spline para un bloque
-         
+
         coefDer = calcularCoeficientes(muestrasDer);
         coefIzq = calcularCoeficientes(muestrasIzq);
         resultado = new Coeficiente[coefDer.length * 2];
-        j=k=0;
+        j = k = 0;
         for (i = 0; i < 2 * coefDer.length; i++) {
             if ((i + 1) % 2 == 1) {
                 resultado[i] = coefIzq[j];
@@ -117,7 +119,7 @@ public class Compressor {
                 //System.out.println("\nCoeficientes Canal Derecho: " + coefDer[k]);
                 k++;
             }
-            
+
         }
 
         return resultado;

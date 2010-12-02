@@ -70,26 +70,24 @@ public class FileManager {
         file = new File(fName);
         this.write = write;
         if (fName.contains(".")) {
-
             type = fName.split("\\.")[1];
-
             try {
                 if (!write) {
                     readFile();
                     int i = 0;
-                    while (i < bytes.length - 7 && headerSize == 0){
-                        if (bytes[i] == (byte)'d' && bytes[i+1] == (byte)'a' && bytes[i+2] == (byte)'t' && bytes[i+3] == (byte)'a')
-                            headerSize =  i + 8;
+                    while (i < bytes.length - 7 && headerSize == 0) {
+                        if (bytes[i] == (byte) 'd' && bytes[i + 1] == (byte) 'a' && bytes[i + 2] == (byte) 't' && bytes[i + 3] == (byte) 'a') {
+                            headerSize = i + 8;
+                        }
                         i++;
                     }
-
                     currentPos = headerSize;
                     i = 0;
                     if (type.equals("KL1") || type.equals("kl1")) {
 
                         /*if(type.equals("KL1")){
-                            headerSize -= 3;
-                            currentPos = headerSize;
+                        headerSize -= 3;
+                        currentPos = headerSize;
                         }*/
                         String compfactor = "", polDe = "", scaleFact = "";
                         while (i < bytes.length && bytes[i] != 13) {
@@ -111,14 +109,16 @@ public class FileManager {
                             scaleFact += (char) bytes[i];
                             i++;
                         }
+
                         i = 0;
                         scaleFactor = Long.decode(scaleFact);
 
                         blockSize = (int) ((polDegree + 1) * 3);
                     }
-                }else{
-                    if (file.exists())
+                } else {
+                    if (file.exists()) {
                         file.delete();
+                    }
                 }
 
             } catch (IOException e) {
@@ -187,8 +187,9 @@ public class FileManager {
     public byte[] getWavHeader() {
         byte header[];
         int i = 0;
-        while (i < bytes.length - 3 && bytes[i] != (byte) 'R')
+        while (i < bytes.length - 3 && bytes[i] != (byte) 'R') {
             i++;
+        }
         header = new byte[headerSize - i];
         System.arraycopy(bytes, i, header, 0, headerSize - i);
 
@@ -216,8 +217,9 @@ public class FileManager {
             if ((fileSize - currentPos) < blockSize) {
                 currentBlockSize = (int) (fileSize - currentPos);
             }
-            if (currentDataBlock == null)
+            if (currentDataBlock == null) {
                 currentDataBlock = new byte[blockSize];
+            }
             System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, currentBlockSize);
             //Copies an array from the specified source array, beginning at the specified position, to the specified position of the destination array.
         } else {
@@ -227,24 +229,33 @@ public class FileManager {
     }
 
     public Coeficiente[] getNextCoeficientesBlock() {
-        Coeficiente[] result = new Coeficiente[blockSize / 3];
-        if (getNextDataBlock() != null){
+        Coeficiente[] result = new Coeficiente[blockSize * 2 / 3];
+        int j;
+        if (getNextDataBlock() != null) {
             byte[] coef = new byte[3];
-
-            for (int i = 0; i< currentDataBlock.length; i = i + 3){
+            j = 0;
+            for (int i = 0; i < currentDataBlock.length; i = i + 3) {
                 System.arraycopy(currentDataBlock, i, coef, 0, 2);
-                result[i/3] = new Coeficiente(coef);
+                result[j] = new Coeficiente(coef);
+                j++;
             }
-        }else
-            return null;
-
+            if (getNextDataBlock() != null) {
+                for (int i = 0; i < currentDataBlock.length; i = i + 3) {
+                    System.arraycopy(currentDataBlock, i, coef, 0, 2);
+                    result[j] = new Coeficiente(coef);
+                    j++;
+                }
+            } else {
+                return null;
+            }   
+        }
         return result;
     }
 
     public long getCurrentPos() {
         return currentPos;
     }
-    
+
     /**
      * Verify if there are any available blocks to read
      * @return
@@ -317,11 +328,11 @@ public class FileManager {
         }
     }
 
-    public byte[] getCurrentDataBlock(){
-        if (currentDataBlock == null){
+    public byte[] getCurrentDataBlock() {
+        if (currentDataBlock == null) {
             currentDataBlock = new byte[blockSize];
         }
-        System.arraycopy(bytes, (int)currentPos, currentDataBlock, 0, blockSize);
+        System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, blockSize);
         return currentDataBlock;
     }
 }

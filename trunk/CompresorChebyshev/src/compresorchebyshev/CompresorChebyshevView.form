@@ -51,7 +51,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
-                                  <Component id="txtPath" pref="576" max="32767" attributes="0"/>
+                                  <Component id="txtPath" pref="572" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="btnExaminar" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -249,7 +249,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
-                                  <Component id="txtPathDesc" pref="576" max="32767" attributes="0"/>
+                                  <Component id="txtPathDesc" pref="572" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="btnExaminarDesc" min="-2" max="-2" attributes="0"/>
                               </Group>
