@@ -12,6 +12,7 @@ import org.jdesktop.application.SingleFrameApplication;
  */
 public class CompresorChebyshevApp extends SingleFrameApplication {
 
+    static int underflow = 0, overflow = 0, total = 0;
     /**
      * At startup create and show the main frame of the application.
      */
@@ -52,6 +53,9 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             int i;
             long numBloques;
             Coeficiente[] tempEscritura;
+            underflow = 0;
+            overflow = 0;
+            total = 0;
             file.setBlockSize(compresor.getMuestrasXBloque() * 4);
             tempEscritura = new Coeficiente[compresor.getMuestrasXBloque()];
             numBloques = (file.getFileSize() - file.getHeader().length) / file.getBlockSize();
@@ -62,7 +66,7 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             fOut.appendData((byte) 0x0D);
             fOut.appendData(GP.toString());
             fOut.appendData((byte) 0x0D);
-            fOut.appendData("1");
+            fOut.appendData(FE.toString());
             fOut.appendData(file.getHeader());
 
             System.err.println("Tamaño de la cabecera: " + file.getHeader().length);
@@ -71,12 +75,17 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             for (i = 0; i < numBloques; i++) {
                 tempEscritura=compresor.comprimirBloque(file.getNextDataBlock());
                 System.out.println("Bloque: " + (i+1) + " " + java.util.Arrays.toString(tempEscritura));
-                for (int j=0; j < tempEscritura.length; j++)
+                for (int j=0; j < tempEscritura.length; j++){
                     fOut.appendData(tempEscritura[j].getAsByteArray());
+                    overflow += tempEscritura[j].isOverflow() ? 1 : 0;
+                    underflow += tempEscritura[j].isUnderflow() ? 1 : 0;
+                    total ++;
+                }
             }
 
-
             System.err.println("===[ Compresión de todos los bloques finalizada: " + numBloques + " ]===");
+            System.err.println("Underflow: " + underflow);
+            System.err.println("Overflow: " + overflow);
 
         } catch (IOException e) {
             System.err.println("Error al comprimir el archivo");
@@ -89,10 +98,10 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
         FileManager fIn = new FileManager(path, false);
         int muestrasXBloque = (int) ((fIn.getDegree() + 1) * fIn.getCompresionFactor() * 3) / 2;
         //byte[] res = new byte[muestrasXBloque * 4 * (int)fIn.getCompresionFactor()];
-        byte[] res = new byte[(int)(fIn.getFileSize() * fIn.getCompresionFactor())];
         Coeficiente[] aux = fIn.getNextCoeficientesBlock();
         Descompresor desc = new Descompresor((int) fIn.getDegree(),(int)fIn.getScaleFactor(), muestrasXBloque);
 
+        System.out.println("Escale factor: " + fIn.getScaleFactor());
         FileManager fOut = new FileManager("descomprimido.wav", true);
         fOut.appendData(fIn.getWavHeader());
 

@@ -10,6 +10,9 @@ import org.jdesktop.application.FrameView;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.io.File;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 
 /**
  * The application's main frame.
@@ -311,6 +314,18 @@ public class CompresorChebyshevView extends FrameView {
     //Debe llamar a un método de App!!
     private void btnComprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComprimirMouseClicked
         CompresorChebyshevApp.getApplication().comprimir(txtPath.getText(), spnGP.getValue(), spnFC.getValue(),txtFE.getText());
+ StringBuilder sb = new StringBuilder();
+   // Send all output to the Appendable object sb
+
+
+   // Explicit argument indices may be used to re-order output.
+
+        NumberFormat formatter = NumberFormat.getPercentInstance(Locale.US);
+
+        formatter.setMinimumFractionDigits(2);
+
+        txtOverFlow.setText(formatter.format((1.0 * CompresorChebyshevApp.getApplication().overflow / (CompresorChebyshevApp.getApplication().total > 0 ? CompresorChebyshevApp.getApplication().total : 1) )).toString());
+        txtUnderFlow.setText(formatter.format((1.0 * CompresorChebyshevApp.getApplication().underflow / (CompresorChebyshevApp.getApplication().total > 0 ? CompresorChebyshevApp.getApplication().total : 1) )).toString());
 
     }//GEN-LAST:event_btnComprimirMouseClicked
 
