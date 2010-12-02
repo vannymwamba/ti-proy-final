@@ -4,10 +4,6 @@
  */
 package compresorchebyshev;
 
-import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author miguelcandia
@@ -16,12 +12,13 @@ public class Descompresor {
 
     private int muestrasXBloque;
     private int GP;
+    private int FE;
     private double[] X;
 
     public Descompresor() {
     }
 
-    public Descompresor(int GP, int muestrasXBloque) {
+    public Descompresor(int GP,int FE, int muestrasXBloque) {
         this.GP = GP;
         this.muestrasXBloque = muestrasXBloque;
         X = new double[muestrasXBloque];//arreglo de la variable independiente
@@ -54,18 +51,6 @@ public class Descompresor {
             }
         }
 
-        /*Codigo de prueba!!
-        j = k = 0;
-        for (i = 0; i < 2*GP +2; i++) {
-        if (j < GP + 1 && (i + 1) % 2 == 1) {
-        coefIzq[j] = i;
-        j++;
-        } else if (k < GP + 1) {
-        coefDer[k] = i;
-        k++;
-        }
-        }*/
-
         //Recuperar muestras
         k = 0;
         for (i = 0; i < muestrasXBloque; i++) {
@@ -74,13 +59,13 @@ public class Descompresor {
             for (j = 3; j < GP + 1; j++) {
                 muestrasIzq[i] += coefIzq[j] * Math.cos((j - 1) * arccos);
             }
-            System.arraycopy(doubleToIntToBytes(muestrasIzq[i]), 0, resultado, k, 2);
+            System.arraycopy(doubleToIntToBytes(muestrasIzq[i]*FE), 0, resultado, k, 2);
             k += 2;
             muestrasDer[i] = coefDer[1] + coefDer[2] * X[i];
             for (j = 3; j < GP + 1; j++) {
                 muestrasDer[i] += coefDer[j] * Math.cos((j - 1) * arccos);
             }
-            System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado, k, 2);
+            System.arraycopy(doubleToIntToBytes(muestrasDer[i]*FE), 0, resultado, k, 2);
             k += 2;
 
         }

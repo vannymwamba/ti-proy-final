@@ -91,7 +91,7 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
         //byte[] res = new byte[muestrasXBloque * 4 * (int)fIn.getCompresionFactor()];
         byte[] res = new byte[(int)(fIn.getFileSize() * fIn.getCompresionFactor())];
         Coeficiente[] aux = fIn.getNextCoeficientesBlock();
-        Descompresor desc = new Descompresor((int) fIn.getDegree(), muestrasXBloque);
+        Descompresor desc = new Descompresor((int) fIn.getDegree(),(int)fIn.getScaleFactor(), muestrasXBloque);
 
         FileManager fOut = new FileManager("descomprimido.wav", true);
         fOut.appendData(fIn.getWavHeader());
