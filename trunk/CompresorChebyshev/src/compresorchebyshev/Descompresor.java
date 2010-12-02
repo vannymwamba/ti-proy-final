@@ -20,6 +20,7 @@ public class Descompresor {
 
     public Descompresor(int GP,int FE, int muestrasXBloque) {
         this.GP = GP;
+        this.FE = FE;
         this.muestrasXBloque = muestrasXBloque;
         X = new double[muestrasXBloque];//arreglo de la variable independiente
         double step = (2 / ((double) muestrasXBloque - 1));
