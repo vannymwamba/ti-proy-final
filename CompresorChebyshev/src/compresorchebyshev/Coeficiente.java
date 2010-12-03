@@ -72,12 +72,13 @@ public class Coeficiente {
             setNegative(false);
         }
 
-        exp = value > 1 ? (int)Math.ceil(Math.log(value) / Math.log(2)) : (int)Math.floor(Math.log(value) / Math.log(2));
+        exp = value > 1 ? (int)Math.floor(Math.log(value) / Math.log(2)) : (int)Math.floor(Math.log(value) / Math.log(2));
 
         if (exp >= -8 && exp <= 7){
 
             valExp = Math.pow(2, exp);
-            setMantiza((value - valExp)/valExp);
+            double mantiza = (value - valExp)/valExp;
+            setMantiza(mantiza);
             setExponent(exp);            
         }
         else{
@@ -134,12 +135,8 @@ public class Coeficiente {
 
     private double getMantiza(){
         int posVal;
-        double mantiza = 0;
-        int val = (((value[0] & 0x7F) << 16) | (value[1]<< 8) | value[2]);
-        for (int i = 1; i <= 19; i++){
-            posVal = (int) Math.pow(2, 19 - i);
-            mantiza += (Math.pow(2 * Integer.bitCount(val & posVal),  i ) != 0 ? 1/Math.pow(2 * Integer.bitCount(val & posVal),  i ) : 0);
-        }
+        int val = Integer.parseInt(Integer.toBinaryString(value[0] & 0x07) + Integer.toBinaryString(value[1] & 0xFF) + Integer.toBinaryString(value[2] & 0xFF), 2);
+        double mantiza = val * Math.pow(2, -19);
 
         return mantiza;
     }
@@ -166,26 +163,27 @@ public class Coeficiente {
     }
     public final void setMantiza(double mantiza){
         int binMantiza;
-        double smallest;
-        if (mantiza >=0 && mantiza < 1){
+        double smallest = Math.pow(2, -19);
+        if (mantiza >=0 && mantiza <= 1 - smallest){
             value [0] = (byte) (value[0] & 0xF8);
-            value [1] = (byte) (value[1] & 0x00);
-            value [2] = (byte) (value[2] & 0x00);
+            value [1] = 0;
+            value [2] = 0;
 
-            smallest = Math.pow(2, -19);
+            binMantiza = (int) Math.round(mantiza / smallest);
 
-            binMantiza = (int) (mantiza / smallest);
+            value [0] = (byte) (value[0] | ((binMantiza >>> 16) & 0x07));
+            value [1] = (byte) ((binMantiza >>> 8) & 0xFF);
+            value [2] = (byte) (binMantiza & 0xFF);
 
-            value [0] = (byte) (value[0] | (binMantiza & 0x070000) >>> 16);
-            value [1] = (byte) ((binMantiza & 0x00FF00) >>> 8);
-            value [2] = (byte) (binMantiza & 0x0000FF);
+            System.out.println(getBinaryString());
         }else
-            ;//Arroja excepción de mantiza inválida
+            System.err.println("La mantiza no tiene un valor válido");//Arroja excepción de mantiza inválida
 
     }
 
     public double toDouble(){
         double dValue;
+        
         dValue = Math.pow(2, getExponent()) * (1 + getMantiza());
 
         if (isNegative())

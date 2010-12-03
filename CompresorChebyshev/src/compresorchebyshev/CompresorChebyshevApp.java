@@ -43,6 +43,8 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
      */
     public static void main(String[] args) throws IOException {
         launch(CompresorChebyshevApp.class, args);
+        Coeficiente temp = new Coeficiente(-34.77997846538095);
+        System.err.println("-34.77997846538095 = " + temp);
     }
     //Crear Compressor y ejecutar compresión
 
