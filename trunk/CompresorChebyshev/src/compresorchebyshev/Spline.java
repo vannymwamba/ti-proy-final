@@ -5,52 +5,64 @@
 package compresorchebyshev;
 
 /**
- *
+ * Clase secundaria en el cálculo de los coeficientes de Chebyshev. Se utiliza
+ * un spline natural para interpolar los valores de la señal entre las muestras
+ * dadas.
  * @author Miguel Candia
  */
 public class Spline {
 
+    /**
+     *
+     */
     public int pN;//muestras por bloque
     private double[] X;//variable independiente
     private double[] S;//coeficientes del spline
     private double[] A;//puntos de ortogonalidad o nodos
     private int[] Y;
 
+    /**
+     * Crea una nueva instancia del objeto Spline con el número de muestras por
+     * bloque e inicia todas las variables para el cálculo del Spline
+     * @param mXB número de muestras por bloque
+     */
     public Spline(int mXB) {
         pN = mXB;
         reiniciarVariables();
     }
 
-    /*
-     *@deprecated
+    /**
+     * Constructor por defecto.
+     * @deprecated se requiere iniciar las variables utilizadas para evitar excepciones.
      */
-    public Spline(){
-        
+    public Spline() {
     }
 
-    private void reiniciarVariables(){
+    /**
+     * Método que inicializa las variables utilizadas para calcular el Spline natural.
+     */
+    private void reiniciarVariables() {
         X = new double[pN];//arreglo de la variable independiente
-        double step = (2 / ((double)pN - 1));
+        double step = (2 / ((double) pN - 1));
         int i;
         X[0] = -1;
         for (i = 1; i < X.length; i++) {
             X[i] = X[i - 1] + step;
         }
         X[pN - 1] = 1;
-        A=null;
-        A=new double[pN];
-        S=null;
-        S=new double[pN];
-        Y=null;
-        Y=new int[pN];
+        A = null;
+        A = new double[pN];
+        S = null;
+        S = new double[pN];
+        Y = null;
+        Y = new int[pN];
     }
 
-     /*
-     * Calcula el spline
-     * @param int pn numero de puntos
-     * @param float[] Y vector de valores
+    /**
+     * Calcula el Spline natural.
+     * @param Y vector de valores
+     * @return
      */
-
     public double[] calcularSpline(int[] Y) {
         double[] RHO = new double[pN], TAU = new double[pN],
                 Xbar = new double[pN], Ybar = new double[pN];
@@ -75,9 +87,9 @@ public class Spline {
             TAU[i + 1] = (D - Hi_1 * TAU[i] / Hi) / TEMP;
         }
         S[0] = 0;
-        S[pN-1] = 0;
+        S[pN - 1] = 0;
         for (i = 1; i < pN - 2; i++) {
-            iB = pN - 1-i;
+            iB = pN - 1 - i;
             S[iB] = RHO[iB + i] * S[iB + 1] + TAU[iB + 1];
         }
         //calcular valores del spline
@@ -88,7 +100,7 @@ public class Spline {
     }
 
     private double spline(double pX) {
-        double A, B, HI, SP;
+        double a, B, HI, SP;
         int i;
         i = 2;
         while (i < pN && pX > X[i]) {
@@ -97,20 +109,27 @@ public class Spline {
         if (pX <= X[i]) {
             i = i - 1;
         }
-        A = X[i + 1] - pX;
+        a = X[i + 1] - pX;
         B = pX - X[i];
         HI = X[i + 1] - X[i];
-        SP = A * S[i] * (A * A / HI - HI) / 6 + B * S[i + 1] * (B * B / HI - HI) / 6 + (A * Y[i] + B * Y[i + 1]) / HI;
+        SP = a * S[i] * (a * a / HI - HI) / 6 + B * S[i + 1] * (B * B / HI - HI) / 6 + (a * Y[i] + B * Y[i + 1]) / HI;
         return SP;
     }
 
+    /**
+     * Regresa el arreglo con los puntos de ortogonalidad A.
+     * @return arreglo con los puntos de ortogonalidad.
+     */
     public double[] getA() {
         return A;
     }
 
+    /**
+     * Inicializar el tamaño del spline. Reinicia las variables del objeto pues dependen de este valor.
+     * @param pN número de muestras para el cálculo del spline.
+     */
     public void setpN(int pN) {
         this.pN = pN;
         reiniciarVariables();
     }
-
 }

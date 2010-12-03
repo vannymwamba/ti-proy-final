@@ -13,7 +13,9 @@ import java.io.OutputStream;
 import java.io.File;
 
 /**
- *
+ * Clase para el manejo de los archivos de entrada y salida con los formatos WAVE
+ * y KL1. Entrega el archivo por bloques para estudiar la posibilidad de una compresión
+ * para streaming.
  * @author emirhg
  */
 public class FileManager {
@@ -33,38 +35,58 @@ public class FileManager {
     private long scaleFactor;
     private boolean write;
 
+    /**
+     * Regresa el factor de compresión.
+     * @return compresionFactor
+     */
     public long getCompresionFactor() {
         return compresionFactor;
     }
 
+    /**
+     * Inicializa el factor de compresión.
+     * @param compresionFactor
+     */
     public void setCompresionFactor(long compresionFactor) {
         this.compresionFactor = compresionFactor;
     }
 
+    /**
+     * Regresa el grado del polinomio.
+     * @return polDegree
+     */
     public long getDegree() {
         return polDegree;
     }
 
+    /**
+     * Inicializar el grado del polinomio.
+     * @param polDegree
+     */
     public void setDegree(long polDegree) {
         this.polDegree = polDegree;
     }
 
+    /**
+     * Regresa el factor de escala.
+     * @return scaleFactor
+     */
     public long getScaleFactor() {
         return scaleFactor;
     }
 
+    /**
+     * Inicializa el factor de escala.
+     * @param scaleFactor
+     */
     public void setScaleFactor(long scaleFactor) {
         this.scaleFactor = scaleFactor;
     }
 
     /**
-     * Creates  new Object FileManager that will operate with the file given in fName
-     * @param fName
-     * The file path
-     */
-    /*public FileManager(String fName){
-    new FileManager(fName,false);
-    }
+     * Crea un nuevo objeto de tipo FileManager que manejará el archivo dado una dirección del archivo.
+     * @param fName La dirección del archivo en sistema.
+     * @param write Tipo de archivo que se utilizará, escritura o lectura.
      */
     public FileManager(String fName, boolean write) {
         file = new File(fName);
@@ -84,11 +106,6 @@ public class FileManager {
                     currentPos = headerSize;
                     i = 0;
                     if (type.equals("KL1") || type.equals("kl1")) {
-
-                        /*if(type.equals("KL1")){
-                        headerSize -= 3;
-                        currentPos = headerSize;
-                        }*/
                         String compfactor = "", polDe = "", scaleFact = "";
                         while (i < bytes.length && bytes[i] != 13) {
                             compfactor += (char) bytes[i];
@@ -102,17 +119,13 @@ public class FileManager {
                             i++;
                         }
                         i++;
-
                         polDegree = Long.decode(polDe);
-
                         while (i < bytes.length - 3 && bytes[i] != (byte) 'R') {
                             scaleFact += (char) bytes[i];
                             i++;
                         }
-
                         i = 0;
                         scaleFactor = Long.decode(scaleFact);
-
                         blockSize = (int) ((polDegree + 1) * 3);
                     }
                 } else {
@@ -130,7 +143,7 @@ public class FileManager {
 
     }
     /*
-     * Reads the whole file and stores it information in a byte array structure
+     * Lee todo el archivo y lo almacena en un arreglo de bytes.
      */
 
     private void readFile() throws IOException {
@@ -138,14 +151,11 @@ public class FileManager {
 
         // Get the size of the file
         fileSize = file.length();
-
         if (fileSize > Integer.MAX_VALUE) {
             // File is too large
         }
-
         // Create the byte array to hold the data
         bytes = new byte[(int) fileSize];
-
         // Read in the bytes
         int offset = 0;
         int numRead = 0;
@@ -153,29 +163,25 @@ public class FileManager {
                 && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
             offset += numRead;
         }
-
         // Ensure all the bytes have been read in
         if (offset < bytes.length) {
             throw new IOException("Could not completely read file " + file.getName());
         }
-
         // Close the input stream and return bytes
         is.close();
     }
 
     /**
-     * Gets the whole file in a byte array representation
-     * @return
-     * An array of bytes that correspond to the file
+     * Regresa todo el archivo en forma de un arreglo de bytes.
+     * @return Un arreglo de bytes que corresponde a todo el archivo.
      */
     public byte[] getBytes() {
         return bytes;
     }
 
     /**
-     * Gets the file header
-     * @return
-     * The file header
+     * Regresa el encabezado del archivo para archivos tipo WAVE o KL1.
+     * @return El encabezado del archivo.
      */
     public byte[] getHeader() {
         byte header[] = new byte[headerSize];
@@ -183,6 +189,10 @@ public class FileManager {
         return header;
     }
 
+    /**
+     * Regresa el encabezado de un archivo tipo WAVE.
+     * @return El encabezado WAVE.
+     */
     public byte[] getWavHeader() {
         byte header[];
         int i = 0;
@@ -196,13 +206,10 @@ public class FileManager {
     }
 
     /**
-     * Gets the next block of non header data
-     * @return
-     * A byte array with the next block data, if there is no more blocks available it returns null
+     * Regresa el siguiente bloque del archivo que sigue al encabezado.
+     * @return Un arreglo de bytes con el siguiente bloque de información, si no existe más datos regresa nulo.
      */
     public byte[] getNextDataBlock() {
-
-
         if (isNextDataBlock()) {
             //Increments the current position in the data
             if (currentPos < headerSize) {
@@ -210,7 +217,6 @@ public class FileManager {
             } else {
                 currentPos += blockSize;
             }
-
             //Sets the available bytes size to read
             currentBlockSize = blockSize;
             if ((fileSize - currentPos) < blockSize) {
@@ -222,11 +228,15 @@ public class FileManager {
             System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, currentBlockSize);
             //Copies an array from the specified source array, beginning at the specified position, to the specified position of the destination array.
         } else {
-            return null;
+            currentDataBlock = null;
         }
         return currentDataBlock;
     }
 
+    /**
+     * Regresa el siguiente bloque de coeficientes en el archivo.
+     * @return El siguiente bloque de coeficientes del archivo, si no existe es nulo.
+     */
     public Coeficiente[] getNextCoeficientesBlock() {
         Coeficiente[] result = new Coeficiente[blockSize * 2 / 3];
         int j;
@@ -248,62 +258,58 @@ public class FileManager {
                 result = null;
             }
         } else {
-            return null;
+            result = null;
         }
         getNextDataBlock();
-
         return result;
     }
 
+    /**
+     * Regresa el índice de la posición actual en el arreglo que contiene al archivo.
+     * @return un entero con la posición sobre el arreglo de bytes que representa el archivo.
+     */
     public long getCurrentPos() {
         return currentPos;
     }
 
     /**
-     * Verify if there are any available blocks to read
-     * @return
-     * True if there are available blocks, false otherwise
+     * Verifica si hay un siguiente bloque de datos para entregar.
+     * @return Cierto si existe un siguiente bloque, falso en caso contrario.
      */
     public boolean isNextDataBlock() {
         return currentPos < fileSize && blockSize != 0;
     }
 
     /**
-     * Gets the current size of the blocks to read, this parameter should be the
-     * the same during all the lecture per block
-     * @return
-     * The lecture block size in bytes
+     * Obtiene el tamaño actual de los bloques a leer, este parámetro no debe variar
+     * mientras haya lectura de bloques.
+     * @return El tamaño del bloque actual.
      */
     public int getBlockSize() {
         return blockSize;
-
-
-
-
     }
 
     /**
-     * Sets the block size to it's new value
-     * @param size
-     * New block size
+     * Inicializa el tamaño del bloque a su nuevo valor.
+     * @param size Nuevo tamaño del bloque
      */
     public void setBlockSize(int size) {
         blockSize = size;
         currentDataBlock = new byte[blockSize];
-
-
-
-
     }
 
+    /**
+     * Regresa el tamaño total del archivo.
+     * @return el tamaño total del archivo.
+     */
     public long getFileSize() {
         return fileSize;
-
-
-
-
     }
 
+    /**
+     * Escribe el el byte al final del archivo de salida actual.
+     * @param data el byte a escribir en el archivo.
+     */
     public void appendData(byte data) {
         try {
             OutputStream os = new FileOutputStream(file, true);
@@ -311,13 +317,13 @@ public class FileManager {
             os.close();
         } catch (IOException e) {
             System.err.println("Couldn't write the data");
-
-
-
-
         }
     }
 
+    /**
+     * Escribe el arreglo de bytes al final del archivo de salida actual.
+     * @param data el arreglo de bytes a escribir en el archivo.
+     */
     public void appendData(byte[] data) {
         if (write) {
             try {
@@ -332,6 +338,10 @@ public class FileManager {
         }
     }
 
+    /**
+     * Escribe el arreglo de bytes que representa la cadena al final del archivo de salida actual.
+     * @param data cadena a escribir en el archivo.
+     */
     public void appendData(String data) {
         if (write) {
             try {
@@ -339,26 +349,18 @@ public class FileManager {
                 DataOutputStream dos = new DataOutputStream(os);
                 dos.writeBytes(data);
                 os.close();
-
-
-
-
             } catch (IOException e) {
                 System.err.println("Couldn't write the data");
-
-
-
-
             }
         } else {
             System.err.println("El archivo se abrio en modo lectura");
-
-
-
-
         }
     }
 
+    /**
+     * Regresa el bloque actual de datos, es decir, el arreglo de bytes de tamaño del bloque a partir de la posición actual
+     * @return El arreglo de bytes del bloque actual.
+     */
     public byte[] getCurrentDataBlock() {
         if (currentDataBlock == null) {
             currentDataBlock = new byte[blockSize];
@@ -371,6 +373,10 @@ public class FileManager {
         return currentDataBlock;
     }
 
+    /**
+     * Regresa el bloque actual de coeficientes en el archivo.
+     * @return arreglo de coeficientes que se encuentran en el archivo.
+     */
     public Coeficiente[] getCurrentCoeficienteDataBlock() {
         Coeficiente[] result = new Coeficiente[blockSize * 2 / 3];
         int j;
@@ -397,8 +403,11 @@ public class FileManager {
         return result;
     }
 
+    /**
+     * Regresa la cantidad de bloques restantes en el archivo.
+     * @return entero con la cantidad de bloques restantes en el archivo.
+     */
     public int getRemainingBlocks() {
         return (int) ((fileSize - currentPos) / blockSize);
-
     }
 }

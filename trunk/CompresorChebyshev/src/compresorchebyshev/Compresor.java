@@ -7,34 +7,46 @@ package compresorchebyshev;
 import java.io.IOException;
 
 /**
- *
+ * Clase con los métodos para realizar la compresión por aproximación polinomial.
+ * Calcula los coeficientes que minimizan el error medio cuadrático a través del
+ * uso de un spline natural que sirve para interpolar los valores de la señal en
+ * los puntos de ortogonalidad.
  * @author Miguel Candia
  */
-public class Compressor {
+public class Compresor {
 
     private int GP;
-    private int FC;
     private int FE;
     private int muestrasXBloque;
     private Spline spl;
 
-    public Compressor(int GP, int FC, int FE) {
+    /**
+     * Instancia un nuevo objeto del tipo Compresor
+     * @param GP Grado del polinomio
+     * @param FC Factor de compresión
+     * @param FE Factor de escala
+     */
+    public Compresor(int GP, int FC, int FE) {
         this.GP = GP;
-        this.FC = FC;
         this.FE = FE;
         muestrasXBloque = (int) ((GP + 1) * FC * 3) / 2;//((24*(GP+1)*2)/8*FC)/4
         spl = new Spline(muestrasXBloque);
     }
 
     /**
-     * Default constructor
+     * Constructor por default
      * @deprecated
-     * If nP it's not set with a default value the class makes an exception when executing calcularCoeficientes()
+     * si muestrasXBloque no tiene un valor por defecto ocurre una excepción al ejecutar calcuarCoeficietnes()
      */
-    public Compressor() {
+    public Compresor() {
         spl = new Spline();
     }
 
+    /**
+     * Calcula los valores de los coeficientes de Chebyshev y lo entrega en un arreglo para escribirlos al archivo de salida.
+     * @param samples arreglo con los valores de las muestras de un canal
+     * @return arreglo de coeficientes
+     */
     public Coeficiente[] calcularCoeficientes(int[] samples) {
         Coeficiente[] result = new Coeficiente[GP + 1];
         double[] coef = new double[GP + 1];
@@ -55,16 +67,17 @@ public class Compressor {
                 coef[j] = coef[j] + Ybar[i] * Math.cos((j - 1) * A[i]);
             }
             coef[j] = coef[j] * 2 / muestrasXBloque;
-            //System.out.println("Coeficiente: " + coef[j]);
+            System.out.println("Coeficiente: " + coef[j]);
             result[j] = new Coeficiente(coef[j]);
-            //System.out.println("Regreso a double: " + result[j].toDouble());
+            System.out.println("Regreso a double: " + result[j].toDouble());
         }
         return result;
     }
 
     /**
-     * Compress the byte block using Chebyshev polynomials
-     * @param arreglo
+     * Comprimir un bloque de datos a través de aproximación polinomial utilizando Chebyshev
+     * @param arreglo bloque de bytes con las muestras izquierda y derecha intercaladas
+     * @return arreglo de coeficientes de aproximación
      * @throws IOException
      */
     public Coeficiente[] comprimirBloque(byte[] arreglo) throws IOException {
@@ -75,10 +88,9 @@ public class Compressor {
         //System.out.println(java.util.Arrays.toString(arreglo));
         canalDer = new byte[muestrasXBloque * 2];
         canalIzq = new byte[muestrasXBloque * 2];
-        /*
-         * Rellenamos los dos arreglos uno por cada canal e invertimos bytes para
-         * poder convertir a Integer posteriormente
-         */
+        
+         // Rellenamos los dos arreglos uno por cada canal e invertimos bytes para
+         // poder convertir a Integer posteriormente
         i = 0;
         j = 0;
         while (i < arreglo.length - 2) {
@@ -114,7 +126,6 @@ public class Compressor {
                 k++;
             }
         }
-        //System.out.println("Compresor 1: " + java.util.Arrays.toString(resultado));
         return resultado;
     }
 
@@ -135,6 +146,10 @@ public class Compressor {
         return i;
     }
 
+    /**
+     * Regresa el número de muestras por bloque.
+     * @return entero con el número de muestras por bloque
+     */
     public int getMuestrasXBloque() {
         return muestrasXBloque;
     }
