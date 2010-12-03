@@ -14,16 +14,23 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
- * The application's main frame.
+ * El marco principal de la aplicación.
  */
 public class CompresorChebyshevView extends FrameView {
 
+    /**
+     * Genera una nueva instancia del objeto CompresorChebyshevView y le asigna
+     * una clase aplicación.
+     * @param app La aplicación que sirve de interfaz con las otras clases
+     */
     public CompresorChebyshevView(SingleFrameApplication app) {
         super(app);
-
         initComponents();
     }
 
+    /**
+     * Método que muestra la ventana con información sobre el programa.
+     */
     @Action
     public void showAboutBox() {
         if (aboutBox == null) {
@@ -354,7 +361,6 @@ public class CompresorChebyshevView extends FrameView {
     }//GEN-LAST:event_btnDescomprimirMouseClicked
 
     private void btnDescomprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescomprimirActionPerformed
-       // leer archivo y obtener valores
         CompresorChebyshevApp.getApplication().descomprimir(txtPathDesc.getText());
     }//GEN-LAST:event_btnDescomprimirActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

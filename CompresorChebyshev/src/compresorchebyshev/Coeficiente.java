@@ -50,6 +50,10 @@ public class Coeficiente {
         setValue(value);
     }
     
+    /**
+     *
+     * @param value
+     */
     public final void setValue(long value){
         this.value = new byte[3];
         this.value[0] = (byte)((value & 0xFF0000) >>> 16);
@@ -57,6 +61,10 @@ public class Coeficiente {
         this.value[2] = (byte)(value & 0x0000FF);
     }
 
+    /**
+     *
+     * @param value
+     */
     public final void setValue(double value){
         this.value = new byte[3];
         double smallest;
@@ -183,6 +191,10 @@ public class Coeficiente {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public double toDouble(){
         double dValue;
         
@@ -202,22 +214,42 @@ public class Coeficiente {
         return "" + toDouble();// + ":" + toHexString() + " Exponente: " + getExponent() + " Mantiza: " + getMantiza();
     }
 
+    /**
+     *
+     * @return
+     */
     public String toBinaryString(){
         return Integer.toBinaryString(((value[0] & 0xFF) << 16) | (value[1] & 0xFF) << 8 | value[2] & 0xFF);
     }
 
+    /**
+     *
+     * @return
+     */
     public String toHexString(){
         return Integer.toHexString(((value[0] & 0xFF) << 16) | (value[1] & 0xFF) << 8 | value[2] & 0xFF);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isUnderflow(){
         return underflow;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isOverflow(){
         return overflow;
     }
 
+    /**
+     *
+     * @return
+     */
     public byte[] getAsByteArray(){
         return value;
     }

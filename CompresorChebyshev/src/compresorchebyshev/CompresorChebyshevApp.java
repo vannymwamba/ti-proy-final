@@ -8,14 +8,14 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
 /**
- * The main class of the application.
+ * La clase principal de la aplicación.
  */
 public class CompresorChebyshevApp extends SingleFrameApplication {
 
     static int underflow = 0, overflow = 0, total = 0;
 
     /**
-     * At startup create and show the main frame of the application.
+     * Al iniciar crear y mostrar el marco principal de la aplicación.
      */
     @Override
     protected void startup() {
@@ -26,21 +26,24 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
      * This method is to initialize the specified window by injecting resources.
      * Windows shown in our application come fully initialized from the GUI
      * builder, so this additional configuration is not needed.
+     * @param root
      */
     @Override
     protected void configureWindow(java.awt.Window root) {
     }
 
     /**
-     * A convenient static getter for the application instance.
-     * @return the instance of CompresorChebyshevApp
+     * Método que regresa la instancia de la aplicación.
+     * @return la instancia de CompresorChebyshevApp
      */
     public static CompresorChebyshevApp getApplication() {
         return Application.getInstance(CompresorChebyshevApp.class);
     }
 
     /**
-     * Main method launching the application.
+     * Método principal que lanza la aplicación.
+     * @param args
+     * @throws IOException
      */
     public static void main(String[] args) throws IOException {
         launch(CompresorChebyshevApp.class, args);
@@ -52,10 +55,19 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
     }
     //Crear Compressor y ejecutar compresión
 
+    /**
+     * Método invocado para realizar la compresión. Utiliza un objeto de tipo FileManager para acceder al archivo de manera secuencial
+     * y poder comprimir por partes un archivo. De igual manera, se guarda en un archivo a través de otro FileManager que adjunta los
+     * bytes al final del archivo.
+     * @param path dirección del archivo a comprimir
+     * @param GP grado del polinomio
+     * @param FC factor de compresión
+     * @param FE factor de escala
+     */
     public static void comprimir(String path, Object GP, Object FC, String FE) {
         try {
             FileManager file = new FileManager(path, false);
-            Compressor compresor = new Compressor(Integer.parseInt(GP.toString()), Integer.parseInt(FC.toString()), Integer.parseInt(FE));
+            Compresor compresor = new Compresor(Integer.parseInt(GP.toString()), Integer.parseInt(FC.toString()), Integer.parseInt(FE));
             int i;
             long numBloques;
             Coeficiente[] tempEscritura;
@@ -93,12 +105,17 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
         }
     }
 
+    /**
+     * Método invocado para realizar la descompresión. Utiliza un objeto de tipo FileManager para acceder al archivo de manera secuencial
+     * y poder descomprimir por bloques un archivo. De igual manera, se guarda en un archivo a través de otro FileManager que adjunta los
+     * bytes al final del archivo.
+     * @param path
+     */
     public void descomprimir(String path) {
         //rellenar con métodos de FileManager y Descompresor!!
         FileManager fIn = new FileManager(path, false);
         int muestrasXBloque = (int) ((fIn.getDegree() + 1) * fIn.getCompresionFactor() * 3) / 2;
         Coeficiente[] aux = fIn.getNextCoeficientesBlock();
-
         Descompresor desc = new Descompresor((int) fIn.getDegree(), (int) fIn.getScaleFactor(), muestrasXBloque);
         String sux = "" + fIn.getDegree();
         String fOutName = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("_") - sux.length()) + ".WAV";
@@ -111,5 +128,7 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             j++;
             aux = fIn.getNextCoeficientesBlock();
         }
+        System.err.println(" ===[ Número de bloques: " + j + " ] === ");
+        System.err.println(" ===[ La descompresión ha finalizado ] === ");
     }
 }

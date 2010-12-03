@@ -5,7 +5,8 @@
 package compresorchebyshev;
 
 /**
- *
+ * Clase que reconstruye la señal a través de los polinomios de Chebyshev y genera
+ * los bytes requeridos para guardar el nuevo archivo WAVE.
  * @author miguelcandia
  */
 public class Descompresor {
@@ -15,9 +16,21 @@ public class Descompresor {
     private int FE;
     private double[] X;
 
+    /**
+     * Constructor por defecto.
+     * @deprecated es necesario iniciar los valores de los cuales depende el
+     * tamaño de los arreglos para evitar excepciones
+     */
     public Descompresor() {
     }
 
+    /**
+     * Genera una nueva instancia del objeto Descompresor. Se inicializa la variable
+     * independiente para el cálculo de las muestras.
+     * @param GP grado del polinomio
+     * @param FE factor de escala
+     * @param muestrasXBloque número de muestras por bloque
+     */
     public Descompresor(int GP, int FE, int muestrasXBloque) {
         this.GP = GP;
         this.FE = FE;
@@ -32,6 +45,11 @@ public class Descompresor {
         X[muestrasXBloque - 1] = 1;
     }
 
+    /**
+     * Calcula los valores de las muestras de un bloque dado un arreglo de coeficientes.
+     * @param bloque arreglo de coeficientes de un bloque, con ambos canales izquierdo y derecho
+     * @return arreglo de bytes con la representación en bytes little endian de las muestras generadas
+     */
     public byte[] descomprimirBloque(Coeficiente[] bloque) {
         byte[] resultado = new byte[muestrasXBloque * 4];
         double[] coefDer = new double[GP + 1], coefIzq = new double[GP + 1];// flata obtener los coeficientes del bloque!!
@@ -79,10 +97,17 @@ public class Descompresor {
             System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado, k, 2);
             k += 2;
         }
-        //System.out.println(java.util.Arrays.toString(resultado));
         return resultado;
     }
 
+    /**
+     * Método que convierte un double a entero para posteriormente guardarlo como
+     * dos bytes que se grabarán en el archivo.
+     * @param muestra double con el valor de la muestra calculado a partir de
+     * los polinomios de Chebyshev
+     * @return arreglo de 2 bytes con el entero en el formato requerido para el
+     * archivo WAVE
+     */
     public byte[] doubleToIntToBytes(double muestra) {
         byte[] resultado = new byte[2];
         int mues = (int) muestra;
@@ -100,8 +125,6 @@ public class Descompresor {
         } else {
             resultado[1] = (byte) (resultado[1] & 0x7F);
         }
-
         return resultado;
-
     }
 }
