@@ -147,20 +147,6 @@ public class Coeficiente {
      * The decimal value for the mantiza
      */
 
-    private String getBinaryString(double val){
-        String result="";
-        for (int i = 0; i < 19; i++){
-            val = val *2;
-            if (val>1){
-                result += "1";
-                val--;
-            }else
-                result += "0";
-
-        }
-
-        return result;
-    }
     public final void setMantiza(double mantiza){
         int binMantiza;
         double smallest = Math.pow(2, -19);
@@ -175,7 +161,6 @@ public class Coeficiente {
             value [1] = (byte) ((binMantiza >>> 8) & 0xFF);
             value [2] = (byte) (binMantiza & 0xFF);
 
-            System.out.println(getBinaryString());
         }else
             System.err.println("La mantiza no tiene un valor válido");//Arroja excepción de mantiza inválida
 
@@ -197,11 +182,15 @@ public class Coeficiente {
      */
     @Override
     public String toString(){
-        return "" + toDouble();//getBinaryString();
+        return "" + toDouble() + ":" + toHexString();
     }
 
-    public String getBinaryString(){
+    public String toBinaryString(){
         return Integer.toBinaryString(((value[0] & 0xFF) << 16) | (value[1] & 0xFF) << 8 | value[2] & 0xFF);
+    }
+
+    public String toHexString(){
+        return Integer.toHexString(((value[0] & 0xFF) << 16) | (value[1] & 0xFF) << 8 | value[2] & 0xFF);
     }
 
     public boolean isUnderflow(){
