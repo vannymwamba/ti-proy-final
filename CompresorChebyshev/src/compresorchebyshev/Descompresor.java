@@ -79,7 +79,7 @@ public class Descompresor {
             System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado, k, 2);
             k += 2;
         }
-        System.out.println(java.util.Arrays.toString(resultado));
+        //System.out.println(java.util.Arrays.toString(resultado));
         return resultado;
     }
 

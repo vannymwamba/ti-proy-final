@@ -257,10 +257,6 @@ public class FileManager {
 
     public long getCurrentPos() {
         return currentPos;
-
-
-
-
     }
 
     /**
@@ -270,10 +266,6 @@ public class FileManager {
      */
     public boolean isNextDataBlock() {
         return currentPos < fileSize && blockSize != 0;
-
-
-
-
     }
 
     /**

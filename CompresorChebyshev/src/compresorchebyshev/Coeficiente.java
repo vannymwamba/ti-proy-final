@@ -135,7 +135,24 @@ public class Coeficiente {
 
     private double getMantiza(){
         int posVal;
-        int val = Integer.parseInt(Integer.toBinaryString(value[0] & 0x07) + Integer.toBinaryString(value[1] & 0xFF) + Integer.toBinaryString(value[2] & 0xFF), 2);
+        String binaryVal, aux;
+
+        aux = Integer.toBinaryString(value[0] & 0x07);
+        while (aux.length()<3)
+            aux = "0" + aux;
+
+        binaryVal = aux;
+        aux =  Integer.toBinaryString(value[1] & 0xFF);
+        while (aux.length()<8)
+            aux = "0" + aux;
+        binaryVal += aux;
+
+        aux =  Integer.toBinaryString(value[2] & 0xFF);
+        while (aux.length()<8)
+            aux = "0" + aux;
+        binaryVal += aux;
+
+        int val = Integer.parseInt(binaryVal, 2);
         double mantiza = val * Math.pow(2, -19);
 
         return mantiza;
@@ -182,7 +199,7 @@ public class Coeficiente {
      */
     @Override
     public String toString(){
-        return "" + toDouble() + ":" + toHexString();
+        return "" + toDouble();// + ":" + toHexString() + " Exponente: " + getExponent() + " Mantiza: " + getMantiza();
     }
 
     public String toBinaryString(){

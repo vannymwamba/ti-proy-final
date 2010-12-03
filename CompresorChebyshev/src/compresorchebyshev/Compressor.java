@@ -72,7 +72,7 @@ public class Compressor {
         int i, j, k;
         int[] muestrasDer, muestrasIzq;
         Coeficiente[] coefDer, coefIzq, resultado;
-        System.out.println(java.util.Arrays.toString(arreglo));
+        //System.out.println(java.util.Arrays.toString(arreglo));
         canalDer = new byte[muestrasXBloque * 2];
         canalIzq = new byte[muestrasXBloque * 2];
         /*
