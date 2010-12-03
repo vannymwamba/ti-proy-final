@@ -90,6 +90,12 @@ public class Descompresor {
         resultado[0] = (byte) (mues & 0xff);
         mues >>= 8;
         resultado[1] = (byte) (mues & 0xff);
+        if (muestra <0)
+            resultado[1] = (byte)(resultado[1] | 0x80);
+        else
+            resultado[1] = (byte)(resultado[1] & 0x7F);
+
         return resultado;
+
     }
 }
