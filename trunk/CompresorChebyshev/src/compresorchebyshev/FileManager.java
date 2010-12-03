@@ -235,13 +235,13 @@ public class FileManager {
             byte[] coef = new byte[3];
             j = 0;
             for (int i = 0; i < currentDataBlock.length; i = i + 3) {
-                System.arraycopy(currentDataBlock, i, coef, 0, 2);
+                System.arraycopy(currentDataBlock, i, coef, 0, 3);
                 result[j] = new Coeficiente(coef);
                 j++;
             }
             if (getNextDataBlock() != null) {
                 for (int i = 0; i < currentDataBlock.length; i = i + 3) {
-                    System.arraycopy(currentDataBlock, i, coef, 0, 2);
+                    System.arraycopy(currentDataBlock, i, coef, 0, 3);
                     result[j] = new Coeficiente(coef);
                     j++;
                 }
@@ -336,6 +336,24 @@ public class FileManager {
         }
         System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, blockSize);
         return currentDataBlock;
+    }
+
+    public Coeficiente[] getCurrentCoeficienteDataBlock() {
+        Coeficiente[] result = new Coeficiente[blockSize / 3];
+        int j;
+        if (getCurrentDataBlock() != null) {
+            byte[] coef = new byte[3];
+            j = 0;
+            for (int i = 0; i < currentDataBlock.length; i = i + 3) {
+                System.arraycopy(currentDataBlock, i, coef, 0, 3);
+                
+                result[j] = new Coeficiente(coef);
+                j++;
+            }
+        }else
+            result = null;
+
+        return result;
     }
 
     public int getRemainingBlocks(){
