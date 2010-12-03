@@ -110,8 +110,9 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
         while (aux != null) {
             //System.arraycopy(desc.descomprimirBloque(aux), 0, res, j, muestrasXBloque * 4);
             fOut.appendData(desc.descomprimirBloque(aux));
+            System.out.println("Offset: " + fIn.getCurrentPos() + " Descomprimiendo bloque: " + j);
+            System.out.println("Faltan " + fIn.getRemainingBlocks() + " bloques");
             j ++;
-            System.out.println("Descomprimiendo bloque: "+j);
             aux = fIn.getNextCoeficientesBlock();
         }
 

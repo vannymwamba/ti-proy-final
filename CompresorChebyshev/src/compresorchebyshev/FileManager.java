@@ -246,9 +246,11 @@ public class FileManager {
                     j++;
                 }
             } else {
-                return null;
+                result = null;
             }   
-        }
+        }else
+            result = null;
+
         return result;
     }
 
@@ -334,5 +336,9 @@ public class FileManager {
         }
         System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, blockSize);
         return currentDataBlock;
+    }
+
+    public int getRemainingBlocks(){
+        return (int) ((fileSize - currentPos) / blockSize);
     }
 }
