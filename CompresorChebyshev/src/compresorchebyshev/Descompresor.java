@@ -39,25 +39,23 @@ public class Descompresor {
         double[] muestrasIzq = new double[muestrasXBloque];
         double arccos;
         int i, j, k;
-
+        // System.out.println("DesCompresor 1: " + java.util.Arrays.toString(bloque));
         //Llenar los arreglos de coeficientes
         j = k = 0;
         for (i = 0; i < bloque.length; i++) {
             if (j < GP + 1 && i < bloque.length / 2) {
                 if (bloque[i] != null) {
                     coefIzq[j] = bloque[i].toDouble();
-                }
-                else{
-                    coefIzq[k]=0;
+                } else {
+                    coefIzq[k] = 0;
                 }
                 j++;
             } else if (k < GP + 1) {
                 if (bloque[i] != null) {
                     coefDer[k] = bloque[i].toDouble();
-                }else{
-                    coefDer[k]=0;
+                } else {
+                    coefDer[k] = 0;
                 }
-
                 k++;
             }
         }
@@ -81,19 +79,27 @@ public class Descompresor {
             System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado, k, 2);
             k += 2;
         }
+        System.out.println(java.util.Arrays.toString(resultado));
         return resultado;
     }
 
     public byte[] doubleToIntToBytes(double muestra) {
         byte[] resultado = new byte[2];
         int mues = (int) muestra;
+        if (mues > 32767) {
+            mues = 32767;
+        }
+        if (mues < -32768) {
+            mues = -32768;
+        }
         resultado[0] = (byte) (mues & 0xff);
         mues >>= 8;
         resultado[1] = (byte) (mues & 0xff);
-        if (muestra <0)
-            resultado[1] = (byte)(resultado[1] | 0x80);
-        else
-            resultado[1] = (byte)(resultado[1] & 0x7F);
+        if (muestra < 0) {
+            resultado[1] = (byte) (resultado[1] | 0x80);
+        } else {
+            resultado[1] = (byte) (resultado[1] & 0x7F);
+        }
 
         return resultado;
 

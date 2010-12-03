@@ -129,11 +129,10 @@ public class FileManager {
         }
 
     }
-
-
     /*
      * Reads the whole file and stores it information in a byte array structure
      */
+
     private void readFile() throws IOException {
         InputStream is = new FileInputStream(file);
 
@@ -231,7 +230,7 @@ public class FileManager {
     public Coeficiente[] getNextCoeficientesBlock() {
         Coeficiente[] result = new Coeficiente[blockSize * 2 / 3];
         int j;
-        if (getNextDataBlock() != null) {
+        if (getCurrentDataBlock() != null) {
             byte[] coef = new byte[3];
             j = 0;
             for (int i = 0; i < currentDataBlock.length; i = i + 3) {
@@ -247,15 +246,21 @@ public class FileManager {
                 }
             } else {
                 result = null;
-            }   
-        }else
-            result = null;
+            }
+        } else {
+            return null;
+        }
+        getNextDataBlock();
 
         return result;
     }
 
     public long getCurrentPos() {
         return currentPos;
+
+
+
+
     }
 
     /**
@@ -265,6 +270,10 @@ public class FileManager {
      */
     public boolean isNextDataBlock() {
         return currentPos < fileSize && blockSize != 0;
+
+
+
+
     }
 
     /**
@@ -275,6 +284,10 @@ public class FileManager {
      */
     public int getBlockSize() {
         return blockSize;
+
+
+
+
     }
 
     /**
@@ -285,10 +298,18 @@ public class FileManager {
     public void setBlockSize(int size) {
         blockSize = size;
         currentDataBlock = new byte[blockSize];
+
+
+
+
     }
 
     public long getFileSize() {
         return fileSize;
+
+
+
+
     }
 
     public void appendData(byte data) {
@@ -298,6 +319,10 @@ public class FileManager {
             os.close();
         } catch (IOException e) {
             System.err.println("Couldn't write the data");
+
+
+
+
         }
     }
 
@@ -322,11 +347,23 @@ public class FileManager {
                 DataOutputStream dos = new DataOutputStream(os);
                 dos.writeBytes(data);
                 os.close();
+
+
+
+
             } catch (IOException e) {
                 System.err.println("Couldn't write the data");
+
+
+
+
             }
         } else {
             System.err.println("El archivo se abrio en modo lectura");
+
+
+
+
         }
     }
 
@@ -334,29 +371,42 @@ public class FileManager {
         if (currentDataBlock == null) {
             currentDataBlock = new byte[blockSize];
         }
-        System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, blockSize);
+        try {
+            System.arraycopy(bytes, (int) currentPos, currentDataBlock, 0, blockSize);
+        } catch (Exception e) {
+            currentDataBlock = null;
+        }
         return currentDataBlock;
     }
 
     public Coeficiente[] getCurrentCoeficienteDataBlock() {
-        Coeficiente[] result = new Coeficiente[blockSize / 3];
+        Coeficiente[] result = new Coeficiente[blockSize * 2 / 3];
         int j;
         if (getCurrentDataBlock() != null) {
             byte[] coef = new byte[3];
             j = 0;
             for (int i = 0; i < currentDataBlock.length; i = i + 3) {
                 System.arraycopy(currentDataBlock, i, coef, 0, 3);
-                
                 result[j] = new Coeficiente(coef);
                 j++;
             }
-        }else
+            if (getNextDataBlock() != null) {
+                for (int i = 0; i < currentDataBlock.length; i = i + 3) {
+                    System.arraycopy(currentDataBlock, i, coef, 0, 3);
+                    result[j] = new Coeficiente(coef);
+                    j++;
+                }
+            } else {
+                result = null;
+            }
+        } else {
             result = null;
-
+        }
         return result;
     }
 
-    public int getRemainingBlocks(){
+    public int getRemainingBlocks() {
         return (int) ((fileSize - currentPos) / blockSize);
+
     }
 }
