@@ -52,32 +52,19 @@ public class Descompresor {
      */
     public byte[] descomprimirBloque(Coeficiente[] bloque) {
 
-        //System.out.println("Entrada del Descompresor: " + java.util.Arrays.toString(bloque));
-
-        byte[] resultado = new byte[muestrasXBloque * 4];
-        double[] coefDer = new double[GP + 1], coefIzq = new double[GP + 1];// flata obtener los coeficientes del bloque!!
-        double[] muestrasDer = new double[muestrasXBloque];
-        double[] muestrasIzq = new double[muestrasXBloque];
+        byte[] resultado = new byte[muestrasXBloque * 2];
+        double[] coef = new double[GP + 1];
+        double[] muestras = new double[muestrasXBloque];
         double arccos;
         int i, j, k;
-        // System.out.println("DesCompresor 1: " + java.util.Arrays.toString(bloque));
+
         //Llenar los arreglos de coeficientes
         j = k = 0;
         for (i = 0; i < bloque.length; i++) {
-            if (j < GP + 1 && i < bloque.length / 2) {
-                if (bloque[i] != null) {
-                    coefIzq[j] = bloque[i].toDouble();
-                } else {
-                    coefIzq[k] = 0;
-                }
-                j++;
-            } else if (k < GP + 1) {
-                if (bloque[i] != null) {
-                    coefDer[k] = bloque[i].toDouble();
-                } else {
-                    coefDer[k] = 0;
-                }
-                k++;
+            if (bloque[i] != null) {
+                coef[i] = bloque[i].toDouble();
+            } else {
+                coef[i] = 0;
             }
         }
 
@@ -85,20 +72,20 @@ public class Descompresor {
         k = 0;
         for (i = 0; i < muestrasXBloque; i++) {
             arccos = Math.acos(X[i]);
-            muestrasIzq[i] = coefIzq[1] + coefIzq[2] * X[i];
+            muestras[i] = coef[1] + coef[2] * X[i];
             for (j = 3; j < GP + 1; j++) {
-                muestrasIzq[i] += coefIzq[j] * Math.cos((j - 1) * arccos);
+                muestras[i] += coef[j] * Math.cos((j - 1) * arccos);
             }
-            muestrasIzq[i] = muestrasIzq[i] * FE;
-            System.arraycopy(doubleToIntToBytes(muestrasIzq[i]), 0, resultado, k, 2);
+            muestras[i] = muestras[i] * FE;
+            System.arraycopy(doubleToIntToBytes(muestras[i]), 0, resultado, k, 2);
             k += 2;
-            muestrasDer[i] = coefDer[1] + coefDer[2] * X[i];
+            /*muestrasDer[i] = coefDer[1] + coefDer[2] * X[i];
             for (j = 3; j < GP + 1; j++) {
                 muestrasDer[i] += coefDer[j] * Math.cos((j - 1) * arccos);
             }
             muestrasDer[i] = muestrasDer[i] * FE;
             System.arraycopy(doubleToIntToBytes(muestrasDer[i]), 0, resultado, k, 2);
-            k += 2;
+            k += 2;*/
         }
         return resultado;
     }

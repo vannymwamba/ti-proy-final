@@ -73,7 +73,7 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             underflow = 0;
             overflow = 0;
             total = 0;
-            file.setBlockSize(compresor.getMuestrasXBloque() * 4);
+            file.setBlockSize(compresor.getMuestrasXBloque() * 2);
             tempEscritura = new Coeficiente[compresor.getMuestrasXBloque()];
             numBloques = (file.getFileSize() - file.getHeader().length) / file.getBlockSize();
 

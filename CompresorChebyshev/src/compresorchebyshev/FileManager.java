@@ -120,8 +120,13 @@ public class FileManager {
                         }
                         i++;
                         polDegree = Long.decode(polDe);
-                        while (i < bytes.length - 3 && bytes[i] != (byte) 'R') {
-                            scaleFact += (char) bytes[i];
+                        while (i < bytes.length - 3) {
+                            try{
+                                Integer.decode(((char)(bytes[i]) + ""));
+                                scaleFact += (char) bytes[i];
+                            }catch(NumberFormatException e){
+                                i = bytes.length;
+                            }
                             i++;
                         }
                         i = 0;
@@ -196,8 +201,15 @@ public class FileManager {
     public byte[] getWavHeader() {
         byte header[];
         int i = 0;
-        while (i < bytes.length - 3 && bytes[i] != (byte) 'R') {
-            i++;
+        boolean continua = true;
+        while (i < bytes.length - 3 && continua) {
+            try{
+                if (bytes[i] != 13)
+                    Integer.decode(((char)(bytes[i]) + ""));
+                i++;
+            }catch(NumberFormatException e){
+                continua = false;
+            }
         }
         header = new byte[headerSize - i];
         System.arraycopy(bytes, i, header, 0, headerSize - i);
@@ -238,7 +250,7 @@ public class FileManager {
      * @return El siguiente bloque de coeficientes del archivo, si no existe es nulo.
      */
     public Coeficiente[] getNextCoeficientesBlock() {
-        Coeficiente[] result = new Coeficiente[blockSize * 2 / 3];
+        Coeficiente[] result = new Coeficiente[blockSize / 3];
         int j;
         if (getCurrentDataBlock() != null) {
             byte[] coef = new byte[3];
@@ -248,7 +260,7 @@ public class FileManager {
                 result[j] = new Coeficiente(coef);
                 j++;
             }
-            if (getNextDataBlock() != null) {
+            /*if (getNextDataBlock() != null) {
                 for (int i = 0; i < currentDataBlock.length; i = i + 3) {
                     System.arraycopy(currentDataBlock, i, coef, 0, 3);
                     result[j] = new Coeficiente(coef);
@@ -256,7 +268,7 @@ public class FileManager {
                 }
             } else {
                 result = null;
-            }
+            }*/
         } else {
             result = null;
         }
