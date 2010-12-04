@@ -77,7 +77,7 @@ public class FileManager {
 
     /**
      * Inicializa el factor de escala.
-     * @param scaleFactor
+     * @param scaleFactor Factor de escala
      */
     public void setScaleFactor(long scaleFactor) {
         this.scaleFactor = scaleFactor;
