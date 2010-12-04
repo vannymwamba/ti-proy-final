@@ -48,8 +48,8 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
      */
     public static void main(String[] args) throws IOException {
         launch(CompresorChebyshevApp.class, args);
-        pruebaCoeficiente(-256, 256);
-        pruebaInteger(20);
+        //pruebaCoeficiente(-256, 256);
+        //pruebaInteger(20);
 
     }
     //Crear Compressor y ejecutar compresión
@@ -174,11 +174,6 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
         System.out.println("Realizando la prueba de codficación little endian");
         double value;
         byte val[];
-
-        value = 0;
-        val = descompresor.doubleToIntToBytes(value);
-        System.out.println(value + " = " + java.util.Arrays.toString(val)
-                + " = " + compresor.bytesAEnteroCompDos(val[1], val[0]));
 
         for (int i = 0; i < n; i++){
             value = (Math.random() * 32767 * 2) - 32768;

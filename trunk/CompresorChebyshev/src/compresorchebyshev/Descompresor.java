@@ -51,6 +51,9 @@ public class Descompresor {
      * @return arreglo de bytes con la representación en bytes little endian de las muestras generadas
      */
     public byte[] descomprimirBloque(Coeficiente[] bloque) {
+
+        //System.out.println("Entrada del Descompresor: " + java.util.Arrays.toString(bloque));
+
         byte[] resultado = new byte[muestrasXBloque * 4];
         double[] coefDer = new double[GP + 1], coefIzq = new double[GP + 1];// flata obtener los coeficientes del bloque!!
         double[] muestrasDer = new double[muestrasXBloque];
@@ -117,13 +120,14 @@ public class Descompresor {
         if (mues < -32768) {
             mues = -32768;
         }
-        resultado[0] = (byte) (mues & 0xff);
+
+        resultado[0] = (byte) (mues & 0xFF);
         mues >>= 8;
-        resultado[1] = (byte) (mues & 0xff);
+        resultado[1] = (byte) (mues & 0xFF);
         if (muestra < 0) {
-            resultado[1] = (byte) (resultado[1] | 0x80);
+            resultado[0] = (byte) (resultado[0] | 0x80);
         } else {
-            resultado[1] = (byte) (resultado[1] & 0x7F);
+            resultado[0] = (byte) (resultado[0] & 0x7F);
         }
         return resultado;
     }

@@ -124,6 +124,8 @@ public class Compresor {
                 k++;
             }
         }
+
+        //System.out.println("Salida del Compresor: " + java.util.Arrays.toString(resultado));
         return resultado;
     }
 
@@ -134,6 +136,22 @@ public class Compresor {
      * @return entero
      */
     public int bytesAEnteroCompDos(byte b0, byte b1) {
+  /*      int posVal;
+        String binaryVal, aux;
+
+        aux = Integer.toBinaryString(b0 & 0xFF);
+        while (aux.length()<8)
+            aux = "0" + aux;
+
+        binaryVal = aux;
+        aux =  Integer.toBinaryString(b1 & 0xFF);
+        while (aux.length()<8)
+            aux = "0" + aux;
+        binaryVal += aux;
+
+        int val = Integer.parseInt(binaryVal, 2);
+*/
+        
         int i = 0;
         i |= b0 & 0xFF;
         i <<= 8;
@@ -142,6 +160,7 @@ public class Compresor {
             i = i % 32768 - 32768;
         }
         return i;
+        //return val;
     }
 
     /**
