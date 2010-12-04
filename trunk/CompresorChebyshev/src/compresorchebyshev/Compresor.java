@@ -67,9 +67,7 @@ public class Compresor {
                 coef[j] = coef[j] + Ybar[i] * Math.cos((j - 1) * A[i]);
             }
             coef[j] = coef[j] * 2 / muestrasXBloque;
-            System.out.println("Coeficiente: " + coef[j]);
             result[j] = new Coeficiente(coef[j]);
-            System.out.println("Regreso a double: " + result[j].toDouble());
         }
         return result;
     }

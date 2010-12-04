@@ -6,8 +6,7 @@
 package compresorchebyshev;
 
 /**
- * The coeficiente representation using 3 bytes and float point with XS8
- *
+ * Clase coeficiente para representar un número en formato de punto flotante usando 3 bytes
  * @author emirhg
  */
 public class Coeficiente {

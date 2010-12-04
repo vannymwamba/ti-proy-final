@@ -110,7 +110,7 @@ public class Descompresor {
      */
     public byte[] doubleToIntToBytes(double muestra) {
         byte[] resultado = new byte[2];
-        int mues = (int) muestra;
+        int mues = (int) Math.round(muestra);
         if (mues > 32767) {
             mues = 32767;
         }

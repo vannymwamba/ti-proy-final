@@ -3,6 +3,7 @@
  */
 package compresorchebyshev;
 
+import java.awt.Frame;
 import java.io.IOException;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
@@ -47,10 +48,8 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
      */
     public static void main(String[] args) throws IOException {
         launch(CompresorChebyshevApp.class, args);
-        //Coeficiente test = new Coeficiente(19.125559536835784);
-
-        //System.out.println("19.125559536835784 = " + test);
-
+        pruebaCoeficiente(-256, 256);
+        pruebaInteger(20);
 
     }
     //Crear Compressor y ejecutar compresión
@@ -98,6 +97,11 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
                 }
             }
 
+            Frame f = new Frame();
+            f.setSize(200,200);
+            MsgBox message = new MsgBox
+              (f , "La compresión ha finalizado");
+            message.dispose();
             
         } catch (IOException e) {
             System.err.println("Error al comprimir el archivo");
@@ -128,7 +132,60 @@ public class CompresorChebyshevApp extends SingleFrameApplication {
             j++;
             aux = fIn.getNextCoeficientesBlock();
         }
-        System.err.println(" ===[ Número de bloques: " + j + " ] === ");
-        System.err.println(" ===[ La descompresión ha finalizado ] === ");
+
+        Frame f = new Frame();
+        f.setSize(200,200);
+        MsgBox message = new MsgBox
+          (f , "La descompresión ha finalizado");
+        message.dispose();
+    }
+
+    /**
+     * Prueba de codificación de coeficientes, crea incrementos aleatorios y codifica el número en formato de punto flotante
+     * @param inicio
+     * Cota inferior
+     * @param fin
+     * Cota superior
+     */
+    public static void pruebaCoeficiente(double inicio, double fin){
+        double num;
+
+        System.out.println("Realizando la prueba de codficación de punto flotante");
+        num = 0;
+        Coeficiente val = new Coeficiente(num);
+        System.out.println("Numero original: " + num + "\nCoeficiente: " + val + "\nError: " + (val.toDouble() - num));
+        for (num = inicio; num <  fin; num +=Math.random()){
+            val = new Coeficiente(num);
+            System.out.println("Numero original: " + num + "\nCoeficiente: " + val + "\nError: " + (val.toDouble() - num));
+        }
+
+    }
+
+    /**
+     * Prueba de conversion de integer a little endian y viceversa.
+     * Se realizan conversiones aleatorias
+     * @param n
+     * Número de conversiones a realizar
+     */
+    public static void pruebaInteger(int n){
+        Compresor compresor = new Compresor();
+        Descompresor descompresor = new Descompresor();
+
+        System.out.println("Realizando la prueba de codficación little endian");
+        double value;
+        byte val[];
+
+        value = 0;
+        val = descompresor.doubleToIntToBytes(value);
+        System.out.println(value + " = " + java.util.Arrays.toString(val)
+                + " = " + compresor.bytesAEnteroCompDos(val[1], val[0]));
+
+        for (int i = 0; i < n; i++){
+            value = (Math.random() * 32767 * 2) - 32768;
+            val = descompresor.doubleToIntToBytes(value);
+            System.out.println(value + " = " + java.util.Arrays.toString(val)
+                    + " = " + compresor.bytesAEnteroCompDos(val[1], val[0]));
+        }
+
     }
 }
