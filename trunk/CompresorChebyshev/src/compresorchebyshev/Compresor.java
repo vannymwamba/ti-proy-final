@@ -81,7 +81,7 @@ public class Compresor {
     public Coeficiente[] comprimirBloque(byte[] arreglo) throws IOException {
         byte[] canalDer, canalIzq;
         int i, j, k;
-        int[] muestrasDer, muestrasIzq;
+        int[] muestras;//, muestrasIzq;
         Coeficiente[] coefDer, coefIzq, resultado;
         //System.out.println(java.util.Arrays.toString(arreglo));
         canalDer = new byte[muestrasXBloque * 2];
@@ -91,41 +91,18 @@ public class Compresor {
          // poder convertir a Integer posteriormente
         i = 0;
         j = 0;
-        while (i < arreglo.length - 2) {
-            canalIzq[j] = arreglo[i + 1];
-            canalIzq[j + 1] = arreglo[i];
-            i+=2;
-            canalDer[j] = arreglo[i + 1];
-            canalDer[j + 1] = arreglo[i];
-            i+=2;
-            j+=2;
-        }
-
         //Convertimos los bytes en Integer
-        muestrasDer = new int[muestrasXBloque];
-        muestrasIzq = new int[muestrasXBloque];
+        //muestrasDer = new int[muestrasXBloque];
+        muestras = new int[muestrasXBloque];
         j = 0;
         for (i = 0; i < canalDer.length; i = i + 2) {
-            muestrasDer[j] = bytesAEnteroCompDos(canalDer[i], canalDer[i + 1])/FE;
-            muestrasIzq[j] = bytesAEnteroCompDos(canalIzq[i], canalIzq[i + 1])/FE;
+            muestras[j] = bytesAEnteroCompDos(arreglo[i +1 ], arreglo[i])/FE;
+            //muestrasIzq[j] = bytesAEnteroCompDos(canalIzq[i], canalIzq[i + 1])/FE;
             j++;
         }
         //Obtener coeficientes compresor y spline para un bloque
-        coefDer = calcularCoeficientes(muestrasDer);
-        coefIzq = calcularCoeficientes(muestrasIzq);
-        resultado = new Coeficiente[coefDer.length * 2];
-        j = k = 0;
-        for (i = 0; i < 2 * coefDer.length; i++) {
-            if ((i + 1) % 2 == 1) {
-                resultado[i] = coefIzq[j];
-                j++;
-            } else {
-                resultado[i] = coefDer[k];
-                k++;
-            }
-        }
-
-        //System.out.println("Salida del Compresor: " + java.util.Arrays.toString(resultado));
+        //coefDer = calcularCoeficientes(muestrasDer);
+        resultado = calcularCoeficientes(muestras);
         return resultado;
     }
 
@@ -136,22 +113,6 @@ public class Compresor {
      * @return entero
      */
     public int bytesAEnteroCompDos(byte b0, byte b1) {
-  /*      int posVal;
-        String binaryVal, aux;
-
-        aux = Integer.toBinaryString(b0 & 0xFF);
-        while (aux.length()<8)
-            aux = "0" + aux;
-
-        binaryVal = aux;
-        aux =  Integer.toBinaryString(b1 & 0xFF);
-        while (aux.length()<8)
-            aux = "0" + aux;
-        binaryVal += aux;
-
-        int val = Integer.parseInt(binaryVal, 2);
-*/
-        
         int i = 0;
         i |= b0 & 0xFF;
         i <<= 8;
@@ -160,7 +121,6 @@ public class Compresor {
             i = i % 32768 - 32768;
         }
         return i;
-        //return val;
     }
 
     /**
